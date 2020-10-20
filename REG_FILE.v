@@ -60,8 +60,8 @@ endmodule
 
 module reg_file(IN,OUT1,OUT2,INADDRESS,OUT1ADDRESS,OUT2ADDRESS, WRITE, CLK, RESET);
     input [7:0] IN;
-    input [7:0] OUT1;
-    input [7:0] OUT2;
+    output [7:0] OUT1;
+    output [7:0] OUT2;
     input [2:0] INADDRESS;//defining inputs and outputs
     input WRITE;
     input CLK;
