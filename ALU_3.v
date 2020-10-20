@@ -30,8 +30,8 @@ module testbed;
 		change one of DATA1,DATA2 and RESULT.
 		
 		Considering this case:-
-			*t = 0 - DATA1 = 1,DATA2 = 1,SELECT = ADD. There exists undefined values in DATA1,DATA2 and RESULT. Since ADD has a
-					 delay of 2 units, the ALU outputs/monitors the value in the RESULT(which is not defined)
+			*t = 0 - DATA1 = 1,DATA2 = 1,SELECT = ADD. The RESULT is undefined(x). Since ADD has a delay of 2 units, 
+				 the ALU outputs/monitors the value in the RESULT(which is not defined).
 					 
 			*t = 1 - still the RESULT is undefined because ADD has a delay of 2 time units.
 					(result1 = 1,result2=x,result3=1,result4=1)
