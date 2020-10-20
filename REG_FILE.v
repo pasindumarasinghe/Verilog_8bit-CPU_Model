@@ -1,16 +1,18 @@
-module testbed;
+module testbed;//for testing the alu
     reg [7:0] IN;
-    reg [2:0] INADDRESS,OUT1ADDRESS,OUT2ADDRESS;
+    reg [2:0] INADDRESS,OUT1ADDRESS,OUT2ADDRESS;//creating registers and wires
     reg WRITE, CLK, RESET;
     wire [7:0] OUT1,OUT2;
 
     initial begin
-        $monitor($time," OUT1 : %b OUT2 : %b",OUT1,OUT2);
-        $dumpfile("regfile_wavedata.vcd");
-        $dumpvars(0,testbed);
+        $monitor($time," OUT1 : %b OUT2 : %b",OUT1,OUT2);//monitering the changes in results
+        $dumpfile("regfile_wavedata.vcd");//wavedata dumpfile to be examined with GTKwave
+        $dumpvars(0,testbed);//dumpng all the variables in the testbed 
     end
 
-    initial begin	
+    reg_file myreg(IN,OUT1,OUT2,INADDRESS,OUT1ADDRESS,OUT2ADDRESS, WRITE, CLK, RESET);//instanciating the register file module
+
+    initial begin//creating a clock signal that flips every 10 time units forever 
         CLK = 1'b0;
         forever #10 CLK = ~CLK;	
     end
@@ -48,6 +50,11 @@ module testbed;
         INADDRESS  = 3'b000;
 
     end
+    
+    initial begin//finishing the simulation
+        #100
+        $finish;
+    end
 
 endmodule
 
@@ -55,16 +62,16 @@ module reg_file(IN,OUT1,OUT2,INADDRESS,OUT1ADDRESS,OUT2ADDRESS, WRITE, CLK, RESE
     input [7:0] IN;
     input [7:0] OUT1;
     input [7:0] OUT2;
-    input [2:0] INADDRESS;
+    input [2:0] INADDRESS;//defining inputs and outputs
     input WRITE;
     input CLK;
     input RESET;
     output [2:0] OUT1ADDRESS;
     output [2:0] OUT2ADDRESS;
 
-    reg [7:0] REG_FILE [7:0] ;
+    reg [7:0] REG_FILE [7:0] ;//creating the registers
 
-    integer index_in;    
+    integer index_in;//creating int variables to index the reg_file
     integer index_out1;
     integer index_out2;
     integer i;
@@ -75,15 +82,15 @@ module reg_file(IN,OUT1,OUT2,INADDRESS,OUT1ADDRESS,OUT2ADDRESS, WRITE, CLK, RESE
         index_out2 = OUT2ADDRESS;
     end
 
-    assign #2 OUT1 = REG_FILE[index_out1] ; 
+    assign #2 OUT1 = REG_FILE[index_out1] ;//continuously assigning the values in the regisers to output ports with a delay
 
     assign #2 OUT2 = REG_FILE[index_out2] ;
 
-    always @ (posedge CLK) begin 
-        if (RESET) begin
+    always @ (posedge CLK) begin//at the positive edge of the clock signal
+        if (RESET) begin//if reset signal is enabled, assign registers to  all zeros
             for (i=0;i<8;i++) 
                 REG_FILE[i] <= 8'b0000_0000;
-        end else if (WRITE) begin
+        end else if (WRITE) begin//if the reset is not enabled and the write is enabled write IN value to the relevent register
             REG_FILE[index_in] <= IN;
         end
     end
