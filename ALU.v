@@ -69,11 +69,11 @@ module alu(DATA1,DATA2,RESULT,SELECT);
 
     case (SELECT)
 
-    3'b000 : RESULT <= forward_out;//assigning the coresponding outputs acording to the SELECT signal
-    3'b001 : RESULT <= add_out;
-    3'b010 : RESULT <= and_out;
-    3'b011 : RESULT <= or_out;
-    default : RESULT <=forward_out;
+    3'b000 :  RESULT = forward_out;//assigning the coresponding outputs acording to the SELECT signal
+    3'b001 :  RESULT = add_out;
+    3'b010 :  RESULT = and_out;
+    3'b011 :  RESULT = or_out;
+    default :  RESULT =forward_out;
     
     endcase
 
