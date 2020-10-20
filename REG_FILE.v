@@ -1,4 +1,8 @@
-module testbed;//for testing the alu
+@@ -0,0 +1,147 @@
+
+//===============================================================================================================================
+
+module testbed;//for testing the reg_file
     reg [7:0] IN;
     reg [2:0] INADDRESS,OUT1ADDRESS,OUT2ADDRESS;//creating registers and wires
     reg WRITE, CLK, RESET;
@@ -12,44 +16,84 @@ module testbed;//for testing the alu
 
     reg_file myreg(IN,OUT1,OUT2,INADDRESS,OUT1ADDRESS,OUT2ADDRESS, WRITE, CLK, RESET);//instanciating the register file module
 
+//------------------------------------------------------------------------------------------------
+
     initial begin//creating a clock signal that flips every 10 time units forever 
         CLK = 1'b0;
         forever #10 CLK = ~CLK;	
     end
 
-    initial begin 
-        #50
-        OUT1ADDRESS  = 3'b000;
-        OUT2ADDRESS = 3'b001;
-    end
+//------------------------------------------------------------------------------------------------
     
-    initial begin 
+    initial begin
+		/*
+		Testing the RESET
+		-----------------
+		The clock goes up at t = 10. Therefore, the registers should be reset t = 10.
+		Since reading has a delay of 2 time units, OUT1 and OUT2 should be 0 at t=12.
+		*/
         #5
         RESET = 1;
         WRITE = 0;
+        OUT1ADDRESS = 3'b000;
+        OUT2ADDRESS = 3'b001; 
+        
+		
     end
     
-    initial begin 
-        #15
-        RESET =0;
-        WRITE = 1;
-        IN = 8'b0001_0001;
-        INADDRESS  = 3'b000;
-    end
-    
+//------------------------------------------------------------------------------------------------
+    /*
+    The register starts to write 8'b00011111 in the register 3'b010 at t=30. Since writing has a delay of 1 time units,
+    the value should be written into the register at t=31.When the value of the register is read the OUT1 should be 
+    8'b00010001 at t = 33. Since the OUT2ADDRESS did't change the value should be 8'b00000000.
+    */
     initial begin 
         #25
-        IN = 8'b1000_1000;
-        INADDRESS  = 3'b001;
+        RESET =0;
+        WRITE = 1;
+        IN = 8'b0001_1111;
+        INADDRESS  = 3'b010;
+        OUT1ADDRESS = 3'b010;
     end
     
+//-------------------------------------------------------------------------------------------------
+    /*
+    Making sure the register doesn't work at a negative edge of the clock.
+    *There is a negative edge of the clock at t=40. Even though the WRITE is enabled, the writing process does not take placa.
+    So at t = 39+2 = 41 , OUT1 and OUT2 should be 8b'00000000.
+    
+    */
     initial begin 
-        #35
-        WRITE = 0;
-        IN = 8'b0001_0001;
-        INADDRESS  = 3'b000;
-
+        #39
+        WRITE = 1;
+        IN = 8'b0000_1111;
+        INADDRESS  = 3'b011;
+        OUT1ADDRESS = 3'b011;
     end
+    
+//-------------------------------------------------------------------------------------------------
+    /*
+    Writing to a register and Reading it (using the OUT2)
+    */
+    initial begin 
+        #45
+        WRITE = 1;
+        IN = 8'b0101_0101;
+        INADDRESS  = 3'b100;
+		OUT2ADDRESS = 3'b100;
+    end
+ 
+//--------------------------------------------------------------------------------------------------
+	
+    initial begin
+        #70
+        INADDRESS = 3'b010;
+        IN = 8'b1111_1111;
+        OUT2ADDRESS  = 3'b010;
+         
+    end
+    
+//--------------------------------------------------------------------------------------------------
     
     initial begin//finishing the simulation
         #100
@@ -57,6 +101,12 @@ module testbed;//for testing the alu
     end
 
 endmodule
+
+//===============================================================================================================================
+
+
+
+
 
 module reg_file(IN,OUT1,OUT2,INADDRESS,OUT1ADDRESS,OUT2ADDRESS, WRITE, CLK, RESET);
     input [7:0] IN;
