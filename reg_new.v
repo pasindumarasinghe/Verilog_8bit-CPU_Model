@@ -34,8 +34,8 @@ module testbed;//for testing the reg_file
         #5
         RESET = 1;
         WRITE = 0;
-        OUT1ADDRESS = 3'b000;
-        OUT2ADDRESS = 3'b001; 
+        OUT1ADDRESS = 3'b000; //reg0
+        OUT2ADDRESS = 3'b001; //reg1
         
 		
     end
@@ -51,8 +51,8 @@ module testbed;//for testing the reg_file
         RESET =0;
         WRITE = 1;
         IN = 8'b0001_1111;
-        INADDRESS  = 3'b010;
-        OUT1ADDRESS = 3'b010;
+        INADDRESS  = 3'b010; //reg2
+        OUT1ADDRESS = 3'b010;//reg2
     end
     
 //-------------------------------------------------------------------------------------------------
@@ -66,8 +66,8 @@ module testbed;//for testing the reg_file
         #39
         WRITE = 1;
         IN = 8'b0000_1111;
-        INADDRESS  = 3'b011;
-        OUT1ADDRESS = 3'b011;
+        INADDRESS  = 3'b011; //reg3
+        OUT1ADDRESS = 3'b011;//reg3
     end
     
 //-------------------------------------------------------------------------------------------------
@@ -78,17 +78,17 @@ module testbed;//for testing the reg_file
         #45
         WRITE = 1;
         IN = 8'b0101_0101;
-        INADDRESS  = 3'b100;
-		OUT2ADDRESS = 3'b100;
+        INADDRESS  = 3'b100;//reg4
+		OUT2ADDRESS = 3'b100;//reg4
     end
  
 //--------------------------------------------------------------------------------------------------
 	
     initial begin
         #70
-        INADDRESS = 3'b010;
+        INADDRESS = 3'b010;//reg2
         IN = 8'b1111_1111;
-        OUT2ADDRESS  = 3'b010;
+        OUT2ADDRESS  = 3'b010;//reg2
          
     end
     
@@ -140,7 +140,7 @@ module reg_file(IN,OUT1,OUT2,INADDRESS,OUT1ADDRESS,OUT2ADDRESS, WRITE, CLK, RESE
             for (i=0;i<8;i++) 
                 REG_FILE[i] <= 8'b0000_0000;
         end else if (WRITE) begin//if the reset is not enabled and the write is enabled write IN value to the relevent register
-            REG_FILE[index_in] <= IN;
+            #1 REG_FILE[index_in] <= IN;
         end
     end
 
