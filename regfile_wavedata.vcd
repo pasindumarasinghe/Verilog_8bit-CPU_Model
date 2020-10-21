@@ -1,0 +1,134 @@
+$date
+	Wed Oct 21 10:53:12 2020
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1s
+$end
+$scope module testbed $end
+$var wire 8 ! OUT2 [7:0] $end
+$var wire 8 " OUT1 [7:0] $end
+$var reg 1 # CLK $end
+$var reg 8 $ IN [7:0] $end
+$var reg 3 % INADDRESS [2:0] $end
+$var reg 3 & OUT1ADDRESS [2:0] $end
+$var reg 3 ' OUT2ADDRESS [2:0] $end
+$var reg 1 ( RESET $end
+$var reg 1 ) WRITE $end
+$scope module myreg $end
+$var wire 1 # CLK $end
+$var wire 8 * IN [7:0] $end
+$var wire 3 + INADDRESS [2:0] $end
+$var wire 3 , OUT1ADDRESS [2:0] $end
+$var wire 3 - OUT2ADDRESS [2:0] $end
+$var wire 1 ( RESET $end
+$var wire 1 ) WRITE $end
+$var reg 8 . OUT1 [7:0] $end
+$var reg 8 / OUT2 [7:0] $end
+$var integer 32 0 i [31:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+bx 0
+bx /
+bx .
+bx -
+bx ,
+bx +
+bx *
+x)
+x(
+bx '
+bx &
+bx %
+bx $
+0#
+bx "
+bx !
+$end
+#5
+b1 '
+b1 -
+b0 &
+b0 ,
+0)
+1(
+#10
+b0 0
+1#
+#11
+b1 0
+#12
+b10 0
+#13
+b11 0
+#14
+b100 0
+#15
+b101 0
+#16
+b110 0
+#17
+b111 0
+#18
+b1000 0
+#20
+0#
+#25
+b10 &
+b10 ,
+b10 %
+b10 +
+b11111 $
+b11111 *
+1)
+0(
+#27
+b0 "
+b0 .
+#30
+1#
+#39
+b11 &
+b11 ,
+b11 %
+b11 +
+b1111 $
+b1111 *
+#40
+0#
+#45
+b100 '
+b100 -
+b100 %
+b100 +
+b1010101 $
+b1010101 *
+#47
+b0 !
+b0 /
+#50
+1#
+#60
+0#
+#70
+1#
+b10 '
+b10 -
+b11111111 $
+b11111111 *
+b10 %
+b10 +
+#72
+b11111 !
+b11111 /
+#80
+0#
+#90
+1#
+#100
+0#
