@@ -1,5 +1,5 @@
 $date
-	Wed Oct 21 10:18:21 2020
+	Wed Oct 21 11:06:53 2020
 $end
 $version
 	Icarus Verilog
@@ -24,21 +24,21 @@ $var reg 8 , RESULT [7:0] $end
 $scope module Add $end
 $var wire 8 - DATA1 [7:0] $end
 $var wire 8 . DATA2 [7:0] $end
-$var wire 8 / RESULT [7:0] $end
+$var reg 8 / RESULT [7:0] $end
 $upscope $end
 $scope module And $end
 $var wire 8 0 DATA1 [7:0] $end
 $var wire 8 1 DATA2 [7:0] $end
-$var wire 8 2 RESULT [7:0] $end
+$var reg 8 2 RESULT [7:0] $end
 $upscope $end
 $scope module Forward $end
 $var wire 8 3 DATA2 [7:0] $end
-$var wire 8 4 RESULT [7:0] $end
+$var reg 8 4 RESULT [7:0] $end
 $upscope $end
 $scope module Or $end
 $var wire 8 5 DATA1 [7:0] $end
 $var wire 8 6 DATA2 [7:0] $end
-$var wire 8 7 RESULT [7:0] $end
+$var reg 8 7 RESULT [7:0] $end
 $upscope $end
 $upscope $end
 $upscope $end
@@ -72,12 +72,12 @@ $end
 #1
 b1001110 !
 b1001110 ,
-b11001111 (
-b11001111 7
-b0 *
-b0 2
 b1001110 )
 b1001110 4
+b0 *
+b0 2
+b11001111 (
+b11001111 7
 #2
 b11001111 +
 b11001111 /
@@ -98,12 +98,12 @@ b1 5
 b1 $
 b1 '
 #11
+b11 )
+b11 4
 b1 *
 b1 2
 b11 (
 b11 7
-b11 )
-b11 4
 #12
 b100 !
 b100 ,
@@ -128,12 +128,12 @@ b10 '
 #16
 b11000000 !
 b11000000 ,
+b11101010 )
+b11101010 4
 b11000000 *
 b11000000 2
 b11111111 (
 b11111111 7
-b11101010 )
-b11101010 4
 #17
 b10111111 +
 b10111111 /
@@ -156,12 +156,12 @@ b11 '
 #21
 b11 !
 b11 ,
+b10 )
+b10 4
 b0 *
 b0 2
 b11 (
 b11 7
-b10 )
-b10 4
 #22
 b11 +
 b11 /
@@ -184,10 +184,10 @@ b0 '
 #26
 b1111110 !
 b1111110 ,
-b11111111 (
-b11111111 7
 b1111110 )
 b1111110 4
+b11111111 (
+b11111111 7
 #27
 b11111111 +
 b11111111 /
