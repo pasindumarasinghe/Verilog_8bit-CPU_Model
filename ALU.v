@@ -84,7 +84,7 @@ endmodule
 module FORWARD(DATA2,RESULT);//module for forwarding the data from port two to RESULT
 
     input [7:0] DATA2 ;
-    output reg [7:0] RESULT;
+    output [7:0] RESULT;
     always @ (DATA2,RESULT) 
         RESULT = #1 DATA2;//continuous assigning of valules to the wire RESULT with an artifitial delay
 
@@ -94,10 +94,9 @@ module ADD(DATA1,DATA2,RESULT);//module to add two 8bit data values
 
     input [7:0] DATA1 ;
     input [7:0] DATA2 ;
-    output reg [7:0] RESULT;
+    output [7:0] RESULT;
 
-    always @ (DATA1,DATA2,RESULT)
-        RESULT = #2 DATA1 + DATA2;//addiing the data and continuesly assigning the wire RESULT with an artifitial delay
+    assign #2 ESULT = DATA1 + DATA2;//addiing the data and continuesly assigning the wire RESULT with an artifitial delay
 
 endmodule
 
@@ -105,10 +104,9 @@ module AND(DATA1,DATA2,RESULT) ;//module for bitwise and operation
 
     input [7:0] DATA1 ;
     input [7:0] DATA2 ;
-    output reg [7:0] RESULT;
+    output [7:0] RESULT;
 
-    always @ (DATA1,DATA2,RESULT)
-        RESULT = #1 DATA1 & DATA2;//ANDing the data and continuesly assigning the wire RESULT with an artifitial delay
+    assign #1 RESULT = DATA1 & DATA2;//ANDing the data and continuesly assigning the wire RESULT with an artifitial delay
 
 endmodule
 
@@ -116,9 +114,8 @@ module OR(DATA1,DATA2,RESULT) ;//module for bitwise or operation
 
     input [7:0] DATA1 ;
     input [7:0] DATA2 ;
-    output reg [7:0] RESULT;
+    output [7:0] RESULT;
 
-    always @ (DATA1,DATA2,RESULT)
-        RESULT = #1 DATA1 | DATA2;//ORing the data and continuesly assigning the wire RESULT with an artifitial delay
+    assign #1 RESULT = DATA1 | DATA2;//ORing the data and continuesly assigning the wire RESULT with an artifitial delay
 
 endmodule
