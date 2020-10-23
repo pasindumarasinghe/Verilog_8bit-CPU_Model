@@ -85,8 +85,8 @@ module FORWARD(DATA2,RESULT);//module for forwarding the data from port two to R
 
     input [7:0] DATA2 ;
     output [7:0] RESULT;
-    always @ (DATA2,RESULT) 
-        RESULT = #1 DATA2;//continuous assigning of valules to the wire RESULT with an artifitial delay
+
+    assign #1 RESULT = DATA2;//continuous assigning of valules to the wire RESULT with an artifitial delay
 
 endmodule
 
