@@ -102,11 +102,10 @@ endmodule
 
 //===================================================================================================
 
-
 module reg_file(IN,OUT1,OUT2,INADDRESS,OUT1ADDRESS,OUT2ADDRESS, WRITE, CLK, RESET);
     input [7:0] IN;
-    output reg [7:0] OUT1;
-    output reg [7:0] OUT2;
+    output [7:0] OUT1;
+    output [7:0] OUT2;
     input [2:0] INADDRESS;//defining inputs and outputs
     input WRITE;
     input CLK;
@@ -118,11 +117,9 @@ module reg_file(IN,OUT1,OUT2,INADDRESS,OUT1ADDRESS,OUT2ADDRESS, WRITE, CLK, RESE
 
     integer i ;
 
-    always @ (OUT1ADDRESS)
-        OUT1 = #2 REG_FILE[OUT1ADDRESS] ;//continuously assigning the values in the regisers to output ports with a delay
+    assign #2 OUT1 = REG_FILE[OUT1ADDRESS] ;//continuously assigning the values in the regisers to output ports with a delay
 
-    always @ (OUT2ADDRESS)
-        OUT2 = #2 REG_FILE[OUT2ADDRESS] ;
+    assign#2 OUT2 = REG_FILE[OUT2ADDRESS] ;
 
     always @ (posedge CLK) begin//at the positive edge of the clock signal
         if (RESET) begin//if reset signal is enabled, assign registers to  all zeros
