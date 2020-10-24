@@ -10,15 +10,21 @@ module cpu(PC, INSTRUCTION, CLK, RESET)
     wire [2:0] ALUOP;
     reg COMPLEMENT_FLAG;
     reg IMMEDIATE_FALG;
+    wire [2:0] WRITEREG;
+    wire [7:0] REGOUT1;
     wire [7:0] REGOUT2;
     wire [7:0] COMPLEMENTED_OUT;
     wire [7:0] COMPLEMENT_MUX_OUT;
     wire [7:0] IMMEDIATE_MUX_OUT;
     wire [7:0] IMMEDIATE;
+    wire [7:0] ALU_RESULT;
+    wire [7:0] READREG1;
+    wire [7:0] READREG2;
 	
     control_unit ctrlUnit(CLK,INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG);
     pc_adder pcNext(PC,PC_NEXT);
-
+    reg_file regFile(ALU_RESULT,REGOUT1,REGOUT2,WRITEREG,READREG1,READREG2, WRITEENABLE, CLK, RESET);
+    alu ALU(REGOUT1,IMMEDIATE_MUX_OUT,ALU_RESULT,ALUOP);
     twosComplement complementor(REGOUT2,COMPLEMENTED_OUT);
 
     always @ (REGOUT2,COMPLEMENTED_OUT,COMPLEMENT_FLAG) begin
