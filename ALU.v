@@ -1,4 +1,4 @@
-module testbed;//for testing the alu
+/*module testbed;//for testing the alu
 
     reg [7:0] DATA1,DATA2;
     reg [2:0] SELECT; //creating registers and wires
@@ -49,7 +49,7 @@ module testbed;//for testing the alu
         #100 $finish;
     end
 
-endmodule
+endmodule*/
 
 module alu(DATA1,DATA2,RESULT,SELECT);
 
