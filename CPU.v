@@ -2,20 +2,20 @@
 `include "ALU.v"
 
 module cpu(PC, INSTRUCTION, CLK, RESET)
-    input reg CLK, RESET;
+    input  CLK, RESET;
     output [31:0] PC;
-    output [31:0] PC_NEXT;
+    wire [31:0] PC_NEXT;
     input [31:0] INSTRUCTION;
-    reg WRITEENABLE;
+    wire WRITEENABLE;
     wire [2:0] ALUOP;
-    reg COMPLEMENT_FLAG;
-    reg IMMEDIATE_FALG;
+    wire COMPLEMENT_FLAG;
+    wire IMMEDIATE_FALG;
     wire [2:0] WRITEREG;
     wire [7:0] REGOUT1;
     wire [7:0] REGOUT2;
     wire [7:0] COMPLEMENTED_OUT;
-    wire [7:0] COMPLEMENT_MUX_OUT;
-    wire [7:0] IMMEDIATE_MUX_OUT;
+    reg [7:0] COMPLEMENT_MUX_OUT;
+    reg [7:0] IMMEDIATE_MUX_OUT;
     wire [7:0] IMMEDIATE;
     wire [7:0] ALU_RESULT;
     wire [7:0] READREG1;
