@@ -1,12 +1,10 @@
 `include "REG_FILE.v"
 `include "ALU.v"
 
-module cpu(PC, INSTRUCTION, CLK, RESET)
-
-
-    input CLK, RESET;
+module cpu(PC, INSTRUCTION, CLK, RESET);
+    input CLK,RESET;
     output [31:0] PC;
-    input [31:0] INSTRUCTION;
+    input [31:0] INSTRUCTION; 
 
     wire WRITEENABLE;
     wire [31:0] PC_NEXT;
@@ -21,8 +19,8 @@ module cpu(PC, INSTRUCTION, CLK, RESET)
     reg [7:0] IMMEDIATE_MUX_OUT;
     wire [7:0] IMMEDIATE;
     wire [7:0] ALU_RESULT;
-    wire [7:0] READREG1;
-    wire [7:0] READREG2;
+    wire [2:0] READREG1;
+    wire [2:0] READREG2;
 	
     control_unit ctrlUnit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG);
     pc_adder pcNext(PC,PC_NEXT);
@@ -44,10 +42,13 @@ module cpu(PC, INSTRUCTION, CLK, RESET)
         endcase
     end
 
+    always @ (posedge CLK)
+
 
 endmodule
 
-module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG)
+
+module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG);
     
     input [31:0] INSTRUCTION;
     output reg WRITEENABLE;
@@ -55,8 +56,8 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
     output reg COMPLEMENT_FLAG;
     output reg IMMEDIATE_FALG;
 
-    wire opcode[7:0];
-    opcode = #1 INSTRUCTION[7:0];//decoding delay
+    wire [7:0] opcode;
+    assign #1 opcode = INSTRUCTION[31:24];//decoding delay
 
     always @ (INSTRUCTION) begin
         case (opcode)
@@ -125,20 +126,20 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
             char *op_swi 	= "00001011";
             */
 
-        end
+        
     end
 
 endmodule
 
-module twosComplement(REGOUT2,COMPLEMENTED_OUT)
-    input reg signed [7:0] REGOUT2;
+module twosComplement(REGOUT2,COMPLEMENTED_OUT);
+    input signed [7:0] REGOUT2;
     output signed [7:0] COMPLEMENTED_OUT;
 
     assign #1 COMPLEMENTED_OUT = - REGOUT2;
 
 endmodule
 
-module pc_adder(PC,PC_NEXT)
+module pc_adder(PC,PC_NEXT);
     input [31:0] PC;
     output [31:0] PC_NEXT;
 
