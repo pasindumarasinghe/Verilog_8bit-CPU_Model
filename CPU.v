@@ -2,39 +2,41 @@
 `include "ALU.v"
 
 module cpu(PC, INSTRUCTION, CLK, RESET)
+
     input CLK, RESET;
     output [31:0] PC;
-    output [31:0] PC_NEXT;
     input [31:0] INSTRUCTION;
-    reg WRITEENABLE;
+
+    wire WRITEENABLE;
+    wire [31:0] PC_NEXT;
     wire [2:0] ALUOP;
-    reg COMPLEMENT_FLAG;
-    reg IMMEDIATE_FALG;
+    wire COMPLEMENT_FLAG;
+    wire IMMEDIATE_FALG;
     wire [2:0] WRITEREG;
     wire [7:0] REGOUT1;
     wire [7:0] REGOUT2;
     wire [7:0] COMPLEMENTED_OUT;
-    wire [7:0] COMPLEMENT_MUX_OUT;
-    wire [7:0] IMMEDIATE_MUX_OUT;
+    reg [7:0] COMPLEMENT_MUX_OUT;
+    reg [7:0] IMMEDIATE_MUX_OUT;
     wire [7:0] IMMEDIATE;
     wire [7:0] ALU_RESULT;
     wire [7:0] READREG1;
     wire [7:0] READREG2;
 	
-    control_unit ctrlUnit(CLK,INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG);
+    control_unit ctrlUnit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG);
     pc_adder pcNext(PC,PC_NEXT);
     reg_file regFile(ALU_RESULT,REGOUT1,REGOUT2,WRITEREG,READREG1,READREG2, WRITEENABLE, CLK, RESET);
     alu ALU(REGOUT1,IMMEDIATE_MUX_OUT,ALU_RESULT,ALUOP);
     twosComplement complementor(REGOUT2,COMPLEMENTED_OUT);
 
-    always @ (REGOUT2,COMPLEMENTED_OUT,COMPLEMENT_FLAG) begin
+    always @ (REGOUT2,COMPLEMENTED_OUT,COMPLEMENT_FLAG) begin//mux 1
         case (COMPLEMENT_FLAG)
             0 : COMPLEMENT_MUX_OUT = REGOUT2;
             1 : COMPLEMENT_MUX_OUT = COMPLEMENTED_OUT;
         endcase
     end
 
-    always @ (COMPLEMENT_MUX_OUT,IMMEDIATE_MUX_OUT,IMMEDIATE_FALG) begin
+    always @ (COMPLEMENT_MUX_OUT,IMMEDIATE_MUX_OUT,IMMEDIATE_FALG) begin//mux 2
         case (IMMEDIATE_FALG)
             0 : IMMEDIATE_MUX_OUT = COMPLEMENT_MUX_OUT;
             1 : IMMEDIATE_MUX_OUT = IMMEDIATE;
@@ -45,17 +47,23 @@ module cpu(PC, INSTRUCTION, CLK, RESET)
 endmodule
 
 module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG)
-    wire opcode[7:0];
     
-    opcode = INSTRUCTION[7:0];
+    input [31:0] INSTRUCTION;
+    output reg WRITEENABLE;
+    output reg [2:0] ALUOP;
+    output reg COMPLEMENT_FLAG;
+    output reg IMMEDIATE_FALG;
+
+    wire opcode[7:0];
+    opcode = #1 INSTRUCTION[7:0];//decoding delay
 
     always @ (INSTRUCTION) begin
         case (opcode)
             8'b0000_0000 : begin
-                ALUOP = 3'b000;//loadi==>foward                  
-                WRITEENABLE = 1;
-                COMPLEMENT_FLAG =0;
-                IMMEDIATE_FALG =1;
+                ALUOP <= 3'b000;//loadi==>foward                  
+                WRITEENABLE <= 1;//uncertain about the non blocking
+                COMPLEMENT_FLAG <= 0;
+                IMMEDIATE_FALG <=1;
             end
             8'b0000_0001 : begin
                 ALUOP = 3'b000;//mov==>foward                  
