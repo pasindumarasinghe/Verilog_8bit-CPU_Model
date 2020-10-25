@@ -2,7 +2,7 @@
 `include "ALU.v"
 
 module cpu(PC, INSTRUCTION, CLK, RESET)
-    input reg CLK, RESET;
+    input CLK, RESET;
     output [31:0] PC;
     output [31:0] PC_NEXT;
     input [31:0] INSTRUCTION;
@@ -81,7 +81,18 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
                 COMPLEMENT_FLAG =0;
                 IMMEDIATE_FALG =0;
             end
-            8'b0000_0101 : ALUOP = 3'b011;//or==>or
+            8'b0000_0101 : begin
+                ALUOP = 3'b011;//or==>or                  
+                WRITEENABLE = 1;
+                COMPLEMENT_FLAG =0;
+                IMMEDIATE_FALG =0;
+            end
+            default : begin
+                ALUOP = 3'b000;                  
+                WRITEENABLE = 0;
+                COMPLEMENT_FLAG =0;
+                IMMEDIATE_FALG =0;
+            end
         endcase 
 
            /* 8'b0000_0110 : ALUOP = 3'b001;//j==>add
@@ -122,6 +133,6 @@ module pc_adder(PC,PC_NEXT)
     input [31:0] PC;
     output [31:0] PC_NEXT;
 
-    assign #2 PC_NEXT = PC + 32'b0100;//MSBs are filled with 0s
+    assign #2 PC_NEXT = PC + 32'b0001;//MSBs are filled with 0s
 
 endmodule
