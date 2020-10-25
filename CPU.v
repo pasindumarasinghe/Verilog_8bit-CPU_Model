@@ -3,7 +3,7 @@
 
 module cpu(PC, INSTRUCTION, CLK, RESET);
     input CLK,RESET;
-    output [31:0] PC;
+    output reg [31:0] PC;
     input [31:0] INSTRUCTION; 
 
     wire WRITEENABLE;
@@ -11,7 +11,6 @@ module cpu(PC, INSTRUCTION, CLK, RESET);
     wire [2:0] ALUOP;
     wire COMPLEMENT_FLAG;
     wire IMMEDIATE_FALG;
-    wire [2:0] WRITEREG;
     wire [7:0] REGOUT1;
     wire [7:0] REGOUT2;
     wire [7:0] COMPLEMENTED_OUT;
@@ -19,8 +18,14 @@ module cpu(PC, INSTRUCTION, CLK, RESET);
     reg [7:0] IMMEDIATE_MUX_OUT;
     wire [7:0] IMMEDIATE;
     wire [7:0] ALU_RESULT;
+
     wire [2:0] READREG1;
     wire [2:0] READREG2;
+    wire [2:0] WRITEREG;
+
+    assign READREG1 = INSTRUCTION[15:8];
+    assign READREG2 = INSTRUCTION[7:0];
+    assign WRITEREG = INSTRUCTION[23:16];
 	
     control_unit ctrlUnit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG);
     pc_adder pcNext(PC,PC_NEXT);
@@ -42,7 +47,12 @@ module cpu(PC, INSTRUCTION, CLK, RESET);
         endcase
     end
 
-    always @ (posedge CLK)
+    always @ (posedge CLK) begin
+        case(RESET)
+            0 : PC <= #1 PC_NEXT;
+            1 : PC <= #1 32'b0;
+        endcase
+    end
 
 
 endmodule
@@ -143,6 +153,6 @@ module pc_adder(PC,PC_NEXT);
     input [31:0] PC;
     output [31:0] PC_NEXT;
 
-    assign #2 PC_NEXT = PC + 32'b0001;//MSBs are filled with 0s
+    assign #2 PC_NEXT = PC + 32'b0100;//MSBs are filled with 0s
 
 endmodule

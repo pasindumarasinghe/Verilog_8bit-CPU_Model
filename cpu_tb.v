@@ -8,7 +8,12 @@ module cpu_tb;
     reg CLK, RESET;
     wire [31:0] PC;
     wire [31:0] INSTRUCTION;
-    
+    reg [7:0] instr_mem[0:1023];
+
+    assign #2 INSTRUCTION[31:24] = instr_mem[PC];
+    assign #2 INSTRUCTION[23:16] = instr_mem[PC+32'b0001];
+    assign #2 INSTRUCTION[15:8] = instr_mem[PC+32'b0010];
+    assign #2 INSTRUCTION[7:0] = instr_mem[PC+32'b0011];
     /* 
     ------------------------
      SIMPLE INSTRUCTION MEM
@@ -25,12 +30,12 @@ module cpu_tb;
         // Initialize instruction memory with the set of instructions you need execute on CPU
         
         // METHOD 1: manually loading instructions to instr_mem
-        //{instr_mem[10'd3], instr_mem[10'd2], instr_mem[10'd1], instr_mem[10'd0]} = 32'b00000000000001000000000000000101;
-        //{instr_mem[10'd7], instr_mem[10'd6], instr_mem[10'd5], instr_mem[10'd4]} = 32'b00000000000000100000000000001001;
-        //{instr_mem[10'd11], instr_mem[10'd10], instr_mem[10'd9], instr_mem[10'd8]} = 32'b00000010000001100000010000000010;
+        {instr_mem[10'd3], instr_mem[10'd2], instr_mem[10'd1], instr_mem[10'd0]} = 32'b00000000000001000000000000000101;
+        {instr_mem[10'd7], instr_mem[10'd6], instr_mem[10'd5], instr_mem[10'd4]} = 32'b00000000000000100000000000001001;
+        {instr_mem[10'd11], instr_mem[10'd10], instr_mem[10'd9], instr_mem[10'd8]} = 32'b00000010000001100000010000000010;
         
         // METHOD 2: loading instr_mem content from instr_mem.mem file
-        $readmemb("programmer/instr_mem.mem", instr_mem);
+        //$readmemb("instr_mem.mem", instr_mem);
     end
     
     /* 
@@ -48,7 +53,7 @@ module cpu_tb;
 		$dumpvars(0, cpu_tb);
         
         CLK = 1'b0;
-        RESET = 1'b1;
+        RESET = 1'b0;
         
         // TODO: Reset the CPU (by giving a pulse to RESET signal) to start the program execution
         
