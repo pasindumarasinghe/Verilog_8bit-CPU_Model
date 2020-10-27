@@ -31,6 +31,7 @@ Generated output file	: <your_assembly_file_name>.machine
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 
 #define LINE_SIZE 512
