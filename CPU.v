@@ -4,52 +4,55 @@
 module cpu(PC, INSTRUCTION, CLK, RESET);
 
     input CLK,RESET;
-    output reg [31:0] PC;
+    output reg [31:0] PC;//need to store the value of pc to be output 
     input [31:0] INSTRUCTION; 
 
     wire WRITEENABLE;
-    wire [31:0] PC_NEXT;
+    wire [31:0] PC_NEXT; //this wire holds the adder's output until the next posedge 
     wire [2:0] ALUOP;
-    wire COMPLEMENT_FLAG;
-    wire IMMEDIATE_FALG;
-    wire [7:0] REGOUT1;
-    wire [7:0] REGOUT2;
-    wire [7:0] COMPLEMENTED_OUT;
-    reg [7:0] COMPLEMENT_MUX_OUT;
-    reg [7:0] IMMEDIATE_MUX_OUT;
-    wire [7:0] IMMEDIATE;
+    wire COMPLEMENT_FLAG;//control signal for the mux 1 (where complemented or original value is choosen)
+    wire IMMEDIATE_FALG;//control signal for the mux 2 (where immediate value or mux 1's out is choosen)
+    wire [7:0] REGOUT1;//registerfile out 1
+    wire [7:0] REGOUT2;//registerfile out 2
+    wire [7:0] COMPLEMENTED_OUT;//output from the 2's complementor
+    reg [7:0] COMPLEMENT_MUX_OUT;//output from the mux 1 (complement)
+    reg [7:0] IMMEDIATE_MUX_OUT;//output from the mux 2 (immediate)
+    wire [7:0] IMMEDIATE;//immediate value from the control unit 
     wire [7:0] ALU_RESULT;
 
+    //register file inputs
     wire [2:0] READREG1;
     wire [2:0] READREG2;
     wire [2:0] WRITEREG;
 
+    //setting the wires for immediate value and reg_file inputs with relevent bits of the instruction
     assign WRITEREG = INSTRUCTION[23:16];
     assign READREG1 = INSTRUCTION[15:8];
     assign READREG2 = INSTRUCTION[7:0];
     assign IMMEDIATE = INSTRUCTION[7:0];
 	
+    //instantiating the modules control unit, pc adder, reg file, alu and the complementor
     control_unit ctrlUnit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG);
     pc_adder pcNext(PC,PC_NEXT);
     reg_file regFile(ALU_RESULT,REGOUT1,REGOUT2,WRITEREG,READREG1,READREG2, WRITEENABLE, CLK, RESET);
     alu ALU(REGOUT1,IMMEDIATE_MUX_OUT,ALU_RESULT,ALUOP);
     twosComplement complementor(REGOUT2,COMPLEMENTED_OUT);
 
-    always @ (REGOUT2,COMPLEMENTED_OUT,COMPLEMENT_FLAG) begin//mux 1
+    always @ (REGOUT2,COMPLEMENTED_OUT,COMPLEMENT_FLAG) begin//mux 1 (where complemented or original value is choosen)
         case (COMPLEMENT_FLAG)
-            0 : COMPLEMENT_MUX_OUT <= REGOUT2;
-            1 : COMPLEMENT_MUX_OUT <= COMPLEMENTED_OUT;
+            0 : COMPLEMENT_MUX_OUT <= REGOUT2;//original value
+            1 : COMPLEMENT_MUX_OUT <= COMPLEMENTED_OUT;//complemented value
         endcase
     end
 
-    always @ (COMPLEMENT_MUX_OUT,IMMEDIATE_FALG,IMMEDIATE) begin//mux 2
+    always @ (COMPLEMENT_MUX_OUT,IMMEDIATE_FALG,IMMEDIATE) begin//mux 2 (where immediate value or mux 1's out is choosen)
         case (IMMEDIATE_FALG)
-            0 : IMMEDIATE_MUX_OUT <= COMPLEMENT_MUX_OUT;
-            1 : IMMEDIATE_MUX_OUT <= IMMEDIATE;
+            0 : IMMEDIATE_MUX_OUT <= COMPLEMENT_MUX_OUT;//previous mux out
+            1 : IMMEDIATE_MUX_OUT <= IMMEDIATE;//immediate value
         endcase
     end
 
-    always @ (posedge CLK) begin
+    always @ (posedge CLK) begin//synchronous reset of the pc
         case(RESET)
             0 : PC <= #1 PC_NEXT;
             1 : PC <= #1 32'b0;
@@ -71,43 +74,43 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
     wire [7:0] opcode;
     assign #1 opcode = INSTRUCTION[31:24];//decoding delay
 
-    always @ (opcode) begin
+    always @ (opcode) begin//control unit decisions
         case (opcode)
-            8'b0000_0000 : begin
-                WRITEENABLE <= 1;//
-                COMPLEMENT_FLAG <= 0;
+            8'b0000_0000 : begin//register is written into and an immediate value is chosen in a loadi instruction
+                WRITEENABLE <= 1;
+                COMPLEMENT_FLAG <= 0;//doesn't matter 0 or 1
                 IMMEDIATE_FALG <=1;
                 ALUOP <= 3'b000;//loadi==>foward                  
             end
-            8'b0000_0001 : begin               
+            8'b0000_0001 : begin// uncomplemented register file output two is fowarded to be written     
                 WRITEENABLE <= 1;
                 COMPLEMENT_FLAG <=0;
                 IMMEDIATE_FALG <=0;
-                ALUOP = 3'b000;//mov==>foward ;stall opcode until the register reading
+                ALUOP = 3'b000;//mov==>foward 
             end
-            8'b0000_0010 : begin                 
+            8'b0000_0010 : begin//uncomplemented values are added             
                 WRITEENABLE <= 1;
                 COMPLEMENT_FLAG <=0;
                 IMMEDIATE_FALG <=0;
-                ALUOP <=  3'b001;//add==>add ;stall opcode until the register reading
+                ALUOP <=  3'b001;//add==>add
             end
-            8'b0000_0011 : begin                
+            8'b0000_0011 : begin//complemented values are added    
                 WRITEENABLE <= 1;
                 COMPLEMENT_FLAG <=1;
                 IMMEDIATE_FALG <=0;
-                ALUOP <=  3'b001;//sub==>add ;stall opcode until the register reading and 2s complementing
+                ALUOP <=  3'b001;//sub==>add
             end
-            8'b0000_0100 : begin               
+            8'b0000_0100 : begin//uncomplemented reg value is andded 
                 WRITEENABLE <= 1;
                 COMPLEMENT_FLAG <=0;
                 IMMEDIATE_FALG <=0;
-                ALUOP <= 3'b010;//and==>and  ;stall opcode until the register reading 
+                ALUOP <= 3'b010;//and==>and  
             end
-            8'b0000_0101 : begin            
+            8'b0000_0101 : begin//uncomplemented values are orred         
                 WRITEENABLE <= 1;
                 COMPLEMENT_FLAG <=0;
                 IMMEDIATE_FALG <=0;
-                ALUOP <=  3'b011;//or==>or ;stall opcode until the register reading    
+                ALUOP <=  3'b011;//or==>or    
             end
             default : begin              
                 WRITEENABLE <= 0;
@@ -115,30 +118,7 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
                 IMMEDIATE_FALG <=0;
                 ALUOP <= 3'b000;    
             end
-        endcase 
-
-           /* 8'b0000_0110 : ALUOP = 3'b001;//j==>add
-            8'b0000_0111 : ALUOP = 3'b001;//sub==>add
-            8'b0000_1000 : ALUOP = 3'b001;//sub==>add
-            8'b0000_1001 : ALUOP = 3'b001;//sub==>add
-            8'b0000_1010 : ALUOP = 3'b001;//sub==>add
-            8'b0000_1011 : ALUOP = 3'b001;//sub==>add
-        
-            char *op_loadi 	= "00000000";
-            char *op_mov 	= "00000001";
-            char *op_add 	= "00000010";
-            char *op_sub 	= "00000011";
-            char *op_and 	= "00000100";
-            char *op_or 	= "00000101";
-            char *op_j		= "00000110";
-            char *op_beq	= "00000111";
-            char *op_lwd 	= "00001000";
-            char *op_lwi 	= "00001001";
-            char *op_swd 	= "00001010";
-            char *op_swi 	= "00001011";
-            */
-
-        
+        endcase  
     end
 
 endmodule

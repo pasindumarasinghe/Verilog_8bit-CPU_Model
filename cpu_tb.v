@@ -20,11 +20,11 @@ module cpu_tb;
     end
 */
 
-    assign #2 INSTRUCTION[7:0] = instr_mem[PC];//is it okay to do continuous assignment with a variable index??
-    assign #2 INSTRUCTION[15:8] = instr_mem[PC+32'b0001];//works fine but practically makes no sense to me  
+    //taking 4 contiguous memory locations to create an instruction
+    assign #2 INSTRUCTION[7:0] = instr_mem[PC];
+    assign #2 INSTRUCTION[15:8] = instr_mem[PC+32'b0001];  
     assign #2 INSTRUCTION[23:16] = instr_mem[PC+32'b0010];
     assign #2 INSTRUCTION[31:24] = instr_mem[PC+32'b0011];
-    //assign CPU_INSTRUCTION = INSTRUCTION;
 
     /* 
     ------------------------
@@ -63,10 +63,11 @@ module cpu_tb;
     
         // generate files needed to plot the waveform using GTKWave
         $dumpfile("cpu_wavedata.vcd");
-		$dumpvars(0, cpu_tb);
-       // $monitor($time,"cmplmt_falg = %b immdte_flag=%b",COMPLEMENT_FLAG,IMMEDIATE_FLAG);
+		$dumpvars(0, cpu_tb););
         
         CLK = 1'b0;
+
+        //creating a reset pulse of 5 time units
         RESET = 1'b1;
         #5
         RESET = 1'b0;
