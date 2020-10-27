@@ -96,7 +96,7 @@ module ADD(DATA1,DATA2,RESULT);//module to add two 8bit data values
     input [7:0] DATA2 ;
     output [7:0] RESULT;
 
-    assign #2 ESULT = DATA1 + DATA2;//addiing the data and continuesly assigning the wire RESULT with an artifitial delay
+    assign #2 RESULT = DATA1 + DATA2;//addiing the data and continuesly assigning the wire RESULT with an artifitial delay
 
 endmodule
 

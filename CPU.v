@@ -2,6 +2,7 @@
 `include "ALU.v"
 
 module cpu(PC, INSTRUCTION, CLK, RESET);
+
     input CLK,RESET;
     output reg [31:0] PC;
     input [31:0] INSTRUCTION; 
@@ -23,9 +24,10 @@ module cpu(PC, INSTRUCTION, CLK, RESET);
     wire [2:0] READREG2;
     wire [2:0] WRITEREG;
 
+    assign WRITEREG = INSTRUCTION[23:16];
     assign READREG1 = INSTRUCTION[15:8];
     assign READREG2 = INSTRUCTION[7:0];
-    assign WRITEREG = INSTRUCTION[23:16];
+    assign IMMEDIATE = INSTRUCTION[7:0];
 	
     control_unit ctrlUnit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG);
     pc_adder pcNext(PC,PC_NEXT);
@@ -35,15 +37,15 @@ module cpu(PC, INSTRUCTION, CLK, RESET);
 
     always @ (REGOUT2,COMPLEMENTED_OUT,COMPLEMENT_FLAG) begin//mux 1
         case (COMPLEMENT_FLAG)
-            0 : COMPLEMENT_MUX_OUT = REGOUT2;
-            1 : COMPLEMENT_MUX_OUT = COMPLEMENTED_OUT;
+            0 : COMPLEMENT_MUX_OUT <= REGOUT2;
+            1 : COMPLEMENT_MUX_OUT <= COMPLEMENTED_OUT;
         endcase
     end
 
-    always @ (COMPLEMENT_MUX_OUT,IMMEDIATE_MUX_OUT,IMMEDIATE_FALG) begin//mux 2
+    always @ (COMPLEMENT_MUX_OUT,IMMEDIATE_FALG,IMMEDIATE) begin//mux 2
         case (IMMEDIATE_FALG)
-            0 : IMMEDIATE_MUX_OUT = COMPLEMENT_MUX_OUT;
-            1 : IMMEDIATE_MUX_OUT = IMMEDIATE;
+            0 : IMMEDIATE_MUX_OUT <= COMPLEMENT_MUX_OUT;
+            1 : IMMEDIATE_MUX_OUT <= IMMEDIATE;
         endcase
     end
 
@@ -69,49 +71,49 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
     wire [7:0] opcode;
     assign #1 opcode = INSTRUCTION[31:24];//decoding delay
 
-    always @ (INSTRUCTION) begin
+    always @ (opcode) begin
         case (opcode)
             8'b0000_0000 : begin
-                ALUOP <= 3'b000;//loadi==>foward                  
-                WRITEENABLE <= 1;//uncertain about the non blocking
+                WRITEENABLE <= 1;//
                 COMPLEMENT_FLAG <= 0;
                 IMMEDIATE_FALG <=1;
+                ALUOP <= 3'b000;//loadi==>foward                  
             end
-            8'b0000_0001 : begin
-                ALUOP = 3'b000;//mov==>foward                  
-                WRITEENABLE = 1;
-                COMPLEMENT_FLAG =0;
-                IMMEDIATE_FALG =0;
+            8'b0000_0001 : begin               
+                WRITEENABLE <= 1;
+                COMPLEMENT_FLAG <=0;
+                IMMEDIATE_FALG <=0;
+                ALUOP = 3'b000;//mov==>foward ;stall opcode until the register reading
             end
-            8'b0000_0010 : begin
-                ALUOP = 3'b001;//add==>add                  
-                WRITEENABLE = 1;
-                COMPLEMENT_FLAG =0;
-                IMMEDIATE_FALG =0;
+            8'b0000_0010 : begin                 
+                WRITEENABLE <= 1;
+                COMPLEMENT_FLAG <=0;
+                IMMEDIATE_FALG <=0;
+                ALUOP <=  3'b001;//add==>add ;stall opcode until the register reading
             end
-            8'b0000_0011 : begin
-                ALUOP = 3'b001;//sub==>add                  
-                WRITEENABLE = 1;
-                COMPLEMENT_FLAG =1;
-                IMMEDIATE_FALG =0;
+            8'b0000_0011 : begin                
+                WRITEENABLE <= 1;
+                COMPLEMENT_FLAG <=1;
+                IMMEDIATE_FALG <=0;
+                ALUOP <=  3'b001;//sub==>add ;stall opcode until the register reading and 2s complementing
             end
-            8'b0000_0100 : begin
-                ALUOP = 3'b010;//and==>and                  
-                WRITEENABLE = 1;
-                COMPLEMENT_FLAG =0;
-                IMMEDIATE_FALG =0;
+            8'b0000_0100 : begin               
+                WRITEENABLE <= 1;
+                COMPLEMENT_FLAG <=0;
+                IMMEDIATE_FALG <=0;
+                ALUOP <= 3'b010;//and==>and  ;stall opcode until the register reading 
             end
-            8'b0000_0101 : begin
-                ALUOP = 3'b011;//or==>or                  
-                WRITEENABLE = 1;
-                COMPLEMENT_FLAG =0;
-                IMMEDIATE_FALG =0;
+            8'b0000_0101 : begin            
+                WRITEENABLE <= 1;
+                COMPLEMENT_FLAG <=0;
+                IMMEDIATE_FALG <=0;
+                ALUOP <=  3'b011;//or==>or ;stall opcode until the register reading    
             end
-            default : begin
-                ALUOP = 3'b000;                  
-                WRITEENABLE = 0;
-                COMPLEMENT_FLAG =0;
-                IMMEDIATE_FALG =0;
+            default : begin              
+                WRITEENABLE <= 0;
+                COMPLEMENT_FLAG <=0;
+                IMMEDIATE_FALG <=0;
+                ALUOP <= 3'b000;    
             end
         endcase 
 
