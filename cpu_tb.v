@@ -14,11 +14,8 @@ module cpu_tb;
     reg [7:0] instr_mem[0:1023];//instruction memory array
 
     //taking 4 contiguous memory locations to create an instruction
-    assign #2 INSTRUCTION[7:0] = instr_mem[PC];
-    assign #2 INSTRUCTION[15:8] = instr_mem[PC+32'b0001];  
-    assign #2 INSTRUCTION[23:16] = instr_mem[PC+32'b0010];
-    assign #2 INSTRUCTION[31:24] = instr_mem[PC+32'b0011];
-
+    assign #2 INSTRUCTION = {instr_mem[PC],instr_mem[PC+32'b0001],instr_mem[PC+32'b0010],instr_mem[PC+32'b0011]};
+    
     /* 
     ------------------------
      SIMPLE INSTRUCTION MEM
@@ -56,7 +53,7 @@ module cpu_tb;
     
         // generate files needed to plot the waveform using GTKWave
         $dumpfile("cpu_wavedata.vcd");
-		$dumpvars(0, cpu_tb););
+		$dumpvars(0, cpu_tb);
         
         CLK = 1'b0;
 
