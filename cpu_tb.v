@@ -1,6 +1,8 @@
 // Computer Architecture (CO224) - Lab 05
 // Design: Testbench of Integrated CPU of Simple Processor
 // Author: Kisaru Liyanage
+//Group : 12
+
 `include "CPU.v"
 
 module cpu_tb;
@@ -8,17 +10,8 @@ module cpu_tb;
     reg CLK, RESET;
     wire [31:0] PC;
     wire [31:0] INSTRUCTION;
-    //wire [31:0] CPU_INSTRUCTION;
-    reg [7:0] instr_mem[0:1023];
 
-/*//this works too but need a wire to be passed to the cpu and a reg to be assigned
-    always @ (PC,INSTRUCTION) begin
-        INSTRUCTION[31:24] <= #2 instr_mem[PC];
-        INSTRUCTION[23:16] <= #2 instr_mem[PC+32'b0001];
-        INSTRUCTION[15:8] <= #2 instr_mem[PC+32'b0010];
-        INSTRUCTION[7:0] <= #2 instr_mem[PC+32'b0011];
-    end
-*/
+    reg [7:0] instr_mem[0:1023];//instruction memory array
 
     //taking 4 contiguous memory locations to create an instruction
     assign #2 INSTRUCTION[7:0] = instr_mem[PC];
