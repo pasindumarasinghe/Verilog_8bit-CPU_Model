@@ -1,5 +1,5 @@
 $date
-	Wed Oct 28 10:33:06 2020
+	Fri Oct 30 22:22:11 2020
 $end
 $version
 	Icarus Verilog
@@ -13,87 +13,118 @@ $var wire 32 " INSTRUCTION [31:0] $end
 $var reg 1 # CLK $end
 $var reg 1 $ RESET $end
 $scope module mycpu $end
+$var wire 1 % BRANCH_FALG $end
 $var wire 1 # CLK $end
-$var wire 32 % INSTRUCTION [31:0] $end
+$var wire 32 & INSTRUCTION [31:0] $end
+$var wire 1 ' JUMP_FALG $end
 $var wire 1 $ RESET $end
-$var wire 3 & WRITEREG [2:0] $end
-$var wire 1 ' WRITEENABLE $end
-$var wire 8 ( REGOUT2 [7:0] $end
-$var wire 8 ) REGOUT1 [7:0] $end
-$var wire 3 * READREG2 [2:0] $end
-$var wire 3 + READREG1 [2:0] $end
-$var wire 32 , PC_NEXT [31:0] $end
-$var wire 1 - IMMEDIATE_FALG $end
-$var wire 8 . IMMEDIATE [7:0] $end
-$var wire 1 / COMPLEMENT_FLAG $end
-$var wire 8 0 COMPLEMENTED_OUT [7:0] $end
-$var wire 8 1 ALU_RESULT [7:0] $end
-$var wire 3 2 ALUOP [2:0] $end
-$var reg 8 3 COMPLEMENT_MUX_OUT [7:0] $end
-$var reg 8 4 IMMEDIATE_MUX_OUT [7:0] $end
-$var reg 32 5 PC [31:0] $end
+$var wire 1 ( ZERO_AND_BRANCHFLAG $end
+$var wire 1 ) ZERO $end
+$var wire 3 * WRITEREG [2:0] $end
+$var wire 1 + WRITEENABLE $end
+$var wire 8 , REGOUT2 [7:0] $end
+$var wire 8 - REGOUT1 [7:0] $end
+$var wire 3 . READREG2 [2:0] $end
+$var wire 3 / READREG1 [2:0] $end
+$var wire 32 0 PC_PLUS4 [31:0] $end
+$var wire 32 1 PC_NEXT_JUMP [31:0] $end
+$var wire 32 2 JUMP_IMMEDIATE_RAW [31:0] $end
+$var wire 32 3 JUMP_IMMEDIATE_FINAL [31:0] $end
+$var wire 1 4 IMMEDIATE_FALG $end
+$var wire 8 5 IMMEDIATE [7:0] $end
+$var wire 1 6 COMPLEMENT_FLAG $end
+$var wire 8 7 COMPLEMENTED_OUT [7:0] $end
+$var wire 8 8 ALU_RESULT [7:0] $end
+$var wire 3 9 ALUOP [2:0] $end
+$var reg 8 : COMPLEMENT_MUX_OUT [7:0] $end
+$var reg 8 ; IMMEDIATE_MUX_OUT [7:0] $end
+$var reg 1 < MUX_3_OUT $end
+$var reg 32 = PC [31:0] $end
+$var reg 32 > PC_NEXT [31:0] $end
 $scope module ALU $end
-$var wire 8 6 DATA2 [7:0] $end
-$var wire 8 7 or_out [7:0] $end
-$var wire 8 8 forward_out [7:0] $end
-$var wire 8 9 and_out [7:0] $end
-$var wire 8 : add_out [7:0] $end
-$var wire 3 ; SELECT [2:0] $end
-$var wire 8 < DATA1 [7:0] $end
-$var reg 8 = RESULT [7:0] $end
+$var wire 8 ? DATA2 [7:0] $end
+$var wire 8 @ or_out [7:0] $end
+$var wire 8 A forward_out [7:0] $end
+$var wire 8 B and_out [7:0] $end
+$var wire 8 C add_out [7:0] $end
+$var wire 3 D SELECT [2:0] $end
+$var wire 8 E DATA1 [7:0] $end
+$var reg 8 F RESULT [7:0] $end
+$var reg 1 ) ZERO $end
 $scope module Add $end
-$var wire 8 > DATA2 [7:0] $end
-$var wire 8 ? RESULT [7:0] $end
-$var wire 8 @ DATA1 [7:0] $end
+$var wire 8 G DATA2 [7:0] $end
+$var wire 8 H RESULT [7:0] $end
+$var wire 8 I DATA1 [7:0] $end
 $upscope $end
 $scope module And $end
-$var wire 8 A DATA2 [7:0] $end
-$var wire 8 B RESULT [7:0] $end
-$var wire 8 C DATA1 [7:0] $end
+$var wire 8 J DATA2 [7:0] $end
+$var wire 8 K RESULT [7:0] $end
+$var wire 8 L DATA1 [7:0] $end
 $upscope $end
 $scope module Forward $end
-$var wire 8 D DATA2 [7:0] $end
-$var wire 8 E RESULT [7:0] $end
+$var wire 8 M DATA2 [7:0] $end
+$var wire 8 N RESULT [7:0] $end
 $upscope $end
 $scope module Or $end
-$var wire 8 F DATA2 [7:0] $end
-$var wire 8 G RESULT [7:0] $end
-$var wire 8 H DATA1 [7:0] $end
+$var wire 8 O DATA2 [7:0] $end
+$var wire 8 P RESULT [7:0] $end
+$var wire 8 Q DATA1 [7:0] $end
 $upscope $end
 $upscope $end
 $scope module complementor $end
-$var wire 8 I REGOUT2 [7:0] $end
-$var wire 8 J COMPLEMENTED_OUT [7:0] $end
+$var wire 8 R REGOUT2 [7:0] $end
+$var wire 8 S COMPLEMENTED_OUT [7:0] $end
 $upscope $end
 $scope module ctrlUnit $end
-$var wire 32 K INSTRUCTION [31:0] $end
-$var wire 8 L opcode [7:0] $end
-$var reg 3 M ALUOP [2:0] $end
-$var reg 1 / COMPLEMENT_FLAG $end
-$var reg 1 - IMMEDIATE_FALG $end
-$var reg 1 ' WRITEENABLE $end
+$var wire 32 T INSTRUCTION [31:0] $end
+$var wire 8 U opcode [7:0] $end
+$var reg 3 V ALUOP [2:0] $end
+$var reg 1 W BRANCH_FALG $end
+$var reg 1 6 COMPLEMENT_FLAG $end
+$var reg 1 4 IMMEDIATE_FALG $end
+$var reg 1 X JUMP_FALG $end
+$var reg 1 + WRITEENABLE $end
+$upscope $end
+$scope module pcJumpNext $end
+$var wire 32 Y JUMP_IMMEDIATE_FINAL [31:0] $end
+$var wire 32 Z PC_PLUS4 [31:0] $end
+$var wire 32 [ PC_NEXT_JUMP [31:0] $end
 $upscope $end
 $scope module pcNext $end
-$var wire 32 N PC [31:0] $end
-$var wire 32 O PC_NEXT [31:0] $end
+$var wire 32 \ PC [31:0] $end
+$var wire 32 ] PC_PLUS4 [31:0] $end
 $upscope $end
 $scope module regFile $end
 $var wire 1 # CLK $end
-$var wire 8 P IN [7:0] $end
-$var wire 3 Q INADDRESS [2:0] $end
-$var wire 8 R OUT1 [7:0] $end
-$var wire 3 S OUT1ADDRESS [2:0] $end
-$var wire 8 T OUT2 [7:0] $end
-$var wire 3 U OUT2ADDRESS [2:0] $end
+$var wire 8 ^ IN [7:0] $end
+$var wire 3 _ INADDRESS [2:0] $end
+$var wire 8 ` OUT1 [7:0] $end
+$var wire 3 a OUT1ADDRESS [2:0] $end
+$var wire 8 b OUT2 [7:0] $end
+$var wire 3 c OUT2ADDRESS [2:0] $end
 $var wire 1 $ RESET $end
-$var wire 1 ' WRITE $end
-$var integer 32 V i [31:0] $end
+$var wire 1 + WRITE $end
+$var integer 32 d i [31:0] $end
 $upscope $end
 $upscope $end
 $upscope $end
 $enddefinitions $end
 #0
 $dumpvars
+bx d
+bx c
+bx b
+bx a
+bx `
+bx _
+bx ^
+bx ]
+bx \
+bx [
+bx Z
+bx00 Y
+xX
+xW
 bx V
 bx U
 bx T
@@ -120,1109 +151,411 @@ bx @
 bx ?
 bx >
 bx =
-bx <
+x<
 bx ;
 bx :
 bx 9
 bx 8
 bx 7
-bx 6
+x6
 bx 5
-bx 4
-bx 3
-bx 2
+x4
+bx00 3
+b0xxxxxxxx 2
 bx 1
 bx 0
-x/
+bx /
 bx .
-x-
+bx -
 bx ,
-bx +
+x+
 bx *
-bx )
-bx (
-x'
+x)
+x(
+z'
 bx &
-bx %
+z%
 1$
 0#
 bx "
 bx !
 $end
 #4
-b1000 V
+b1000 d
 1#
 #5
 b0 !
-b0 5
-b0 N
+b0 =
+b0 \
 0$
 #7
-b100 &
-b100 Q
-b0 +
-b0 S
-b101 *
-b101 U
-b101 .
-b100 ,
-b100 O
-b1000000000000000101 "
-b1000000000000000101 %
-b1000000000000000101 K
-#8
-b101 4
-b101 6
-b101 >
-b101 A
-b101 D
-b101 F
+b0 *
+b0 _
+b1 /
+b1 a
+b0 .
+b0 c
+b0 3
+b0 Y
+b0 5
 b0 2
-b0 ;
-b0 M
-1-
-0/
-1'
-b0 L
+b1 U
+b100 0
+b100 Z
+b100 ]
+b1000000000000000100000000 "
+b1000000000000000100000000 &
+b1000000000000000100000000 T
+#8
+b0 9
+b0 D
+b0 V
+0X
+0W
+04
+06
+1+
 0#
 #9
-b0 3
-b101 1
-b101 =
-b101 P
-b0x0x 9
-b0x0x B
-bx1x1 7
-bx1x1 G
-b101 8
-b101 E
-b0 )
-b0 <
+b0 ;
+b0 ?
+b0 G
+b0 J
+b0 M
+b0 O
+b0 :
+b0 -
+b0 E
+b0 I
+b0 L
+b0 Q
+b0 `
+b0 ,
+b0 R
+b0 b
+b100 1
+b100 [
+#10
+b0 8
+b0 F
+b0 ^
 b0 @
+b0 P
+b0 A
+b0 N
+b0 B
+b0 K
+b0 7
+b0 S
+#11
+1)
 b0 C
 b0 H
-b0 R
-b0 (
-b0 I
-b0 T
-#10
-b101 7
-b101 G
-b0 9
-b0 B
-b0 0
-b0 J
-#11
-b101 :
-b101 ?
 #12
 1#
 #13
-b100 !
-b100 5
-b100 N
+bx !
+bx =
+bx \
 #15
-b1001 4
-b1001 6
-b1001 >
-b1001 A
-b1001 D
-b1001 F
-b10 &
-b10 Q
-b1 *
-b1 U
-b1001 .
-b1000 ,
-b1000 O
-b100000000000001001 "
-b100000000000001001 %
-b100000000000001001 K
+bx *
+bx _
+bx /
+bx a
+bx .
+bx c
+bx00 3
+bx00 Y
+bx 5
+b0xxxxxxxx 2
+bx U
+bx 0
+bx Z
+bx ]
+bx "
+bx &
+bx T
 #16
-b1001 1
-b1001 =
-b1001 P
-b1001 7
-b1001 G
-b1001 8
-b1001 E
+0+
 0#
 #17
-b1001 :
-b1001 ?
-#20
-1#
-#21
-b1000 !
-b1000 5
-b1000 N
-#23
-b10 4
-b10 6
-b10 >
-b10 A
-b10 D
-b10 F
-b110 &
-b110 Q
-b100 +
-b100 S
-b10 *
-b10 U
-b10 .
-b1100 ,
-b1100 O
-b10000001100000010000000010 "
-b10000001100000010000000010 %
-b10000001100000010000000010 K
-#24
-b0 4
-b0 6
-b0 >
-b0 A
-b0 D
-b0 F
-b1 2
-b1 ;
-b1 M
-0-
-b1001 1
-b1001 =
-b1001 P
-b10 7
-b10 G
-b10 8
-b10 E
-b10 L
-0#
-#25
-b1001 4
-b1001 6
-b1001 >
-b1001 A
-b1001 D
-b1001 F
-b1001 3
-b0 7
-b0 G
-b0 8
-b0 E
-b101 )
-b101 <
-b101 @
-b101 C
-b101 H
-b101 R
-b1001 (
-b1001 I
-b1001 T
-#26
-b1 9
-b1 B
-b1001 8
-b1001 E
-b1101 7
-b1101 G
-b11110111 0
-b11110111 J
-#27
-b1110 1
-b1110 =
-b1110 P
-b1110 :
-b1110 ?
-#28
-1#
-#29
-b1100 !
-b1100 5
-b1100 N
-#31
-b0 &
-b0 Q
-b0 +
-b0 S
-b110 *
-b110 U
-b110 .
-b10000 ,
-b10000 O
-b1000000000000000000000110 "
-b1000000000000000000000110 %
-b1000000000000000000000110 K
-#32
-b1001 1
-b1001 =
-b1001 P
-b0 2
-b0 ;
-b0 M
-b1 L
-0#
-#33
-b1110 4
-b1110 6
-b1110 >
-b1110 A
-b1110 D
-b1110 F
-b1110 3
-b0 )
-b0 <
-b0 @
-b0 C
-b0 H
-b0 R
-b1110 (
-b1110 I
-b1110 T
-#34
-b1110 1
-b1110 =
-b1110 P
-b1110 8
-b1110 E
-b1110 7
-b1110 G
-b0 9
-b0 B
-b11110010 0
-b11110010 J
-#36
-1#
-#37
-b10000 !
-b10000 5
-b10000 N
-#38
-b1110 )
-b1110 <
-b1110 @
-b1110 C
-b1110 H
-b1110 R
-#39
-b101 &
-b101 Q
-b1 *
-b1 U
-b1 .
-b1110 9
-b1110 B
-b10100 ,
-b10100 O
-b1010000000000000001 "
-b1010000000000000001 %
-b1010000000000000001 K
-#40
-b1 4
-b1 6
-b1 >
-b1 A
-b1 D
-b1 F
-1-
-b0 L
-b11100 :
-b11100 ?
-0#
-#41
-b0 3
-b1 1
-b1 =
-b1 P
-b0 9
-b0 B
-b1111 7
-b1111 G
-b1 8
-b1 E
-b0 (
-b0 I
-b0 T
-#42
-b0 0
-b0 J
-b1111 :
-b1111 ?
-#44
-1#
-#45
-b10100 !
-b10100 5
-b10100 N
-#47
-b101 4
-b101 6
-b101 >
-b101 A
-b101 D
-b101 F
-b11 &
-b11 Q
-b10 +
-b10 S
-b101 *
-b101 U
-b101 .
-b11000 ,
-b11000 O
-b11000000110000001000000101 "
-b11000000110000001000000101 %
-b11000000110000001000000101 K
-#48
-b0 4
-b0 6
-b0 >
-b0 A
-b0 D
-b0 F
-b1 2
-b1 ;
-b1 M
-0-
-1/
-b1111 1
-b1111 =
-b1111 P
-b100 9
-b100 B
-b101 8
-b101 E
-b11 L
-0#
-#49
-b0 9
-b0 B
-b1110 7
-b1110 G
-b0 8
-b0 E
-b1001 )
-b1001 <
-b1001 @
-b1001 C
-b1001 H
-b1001 R
-b1 (
-b1 I
-b1 T
-#50
-b11111111 4
-b11111111 6
-b11111111 >
-b11111111 A
-b11111111 D
-b11111111 F
-b11111111 3
-b1001 7
-b1001 G
-b11111111 0
-b11111111 J
-#51
-b1001 9
-b1001 B
-b11111111 7
-b11111111 G
-b11111111 8
-b11111111 E
-#52
-b1000 1
-b1000 =
-b1000 P
-b1000 :
-b1000 ?
-1#
-#53
-b11000 !
-b11000 5
-b11000 N
-#55
-bx &
-bx Q
-bx +
-bx S
-bx *
-bx U
-bx .
-b11100 ,
-b11100 O
-bx "
-bx %
-bx K
-#56
-b1 4
-b1 6
-b1 >
-b1 A
-b1 D
-b1 F
-b1 3
-b11111111 1
-b11111111 =
-b11111111 P
-b0 2
-b0 ;
-b0 M
-0/
-0'
+bx ;
+bx ?
+bx G
+bx J
+bx M
+bx O
+bx :
+bx -
+bx E
+bx I
 bx L
-0#
-#57
-bx 4
-bx 6
-bx >
-bx A
-bx D
+bx Q
+bx `
+bx ,
+bx R
+bx b
+bx 1
+bx [
+#18
+bx 8
 bx F
-bx 3
-b1 1
-b1 =
-b1 P
-b1 9
-b1 B
-b1001 7
-b1001 G
-b1 8
-b1 E
-bx )
-bx <
+bx ^
+bx B
+bx K
+bx A
+bx N
 bx @
+bx P
+bx 7
+bx S
+#19
+0(
+0)
 bx C
 bx H
-bx R
-bx (
-bx I
-bx T
-#58
-bx 1
-bx =
-bx P
-bx 8
-bx E
-bx 7
-bx G
-bx 9
-bx B
-bx 0
-bx J
-#59
-bx :
-bx ?
+#20
+1#
+#24
+0#
+#28
+1#
+#32
+0#
+#36
+1#
+#40
+0#
+#44
+1#
+#48
+0#
+#52
+1#
+#56
+0#
 #60
 1#
-#61
-b11100 !
-b11100 5
-b11100 N
-#63
-b100000 ,
-b100000 O
 #64
 0#
 #68
 1#
-#69
-b100000 !
-b100000 5
-b100000 N
-#71
-b100100 ,
-b100100 O
 #72
 0#
 #76
 1#
-#77
-b100100 !
-b100100 5
-b100100 N
-#79
-b101000 ,
-b101000 O
 #80
 0#
 #84
 1#
-#85
-b101000 !
-b101000 5
-b101000 N
-#87
-b101100 ,
-b101100 O
 #88
 0#
 #92
 1#
-#93
-b101100 !
-b101100 5
-b101100 N
-#95
-b110000 ,
-b110000 O
 #96
 0#
 #100
 1#
-#101
-b110000 !
-b110000 5
-b110000 N
-#103
-b110100 ,
-b110100 O
 #104
 0#
 #108
 1#
-#109
-b110100 !
-b110100 5
-b110100 N
-#111
-b111000 ,
-b111000 O
 #112
 0#
 #116
 1#
-#117
-b111000 !
-b111000 5
-b111000 N
-#119
-b111100 ,
-b111100 O
 #120
 0#
 #124
 1#
-#125
-b111100 !
-b111100 5
-b111100 N
-#127
-b1000000 ,
-b1000000 O
 #128
 0#
 #132
 1#
-#133
-b1000000 !
-b1000000 5
-b1000000 N
-#135
-b1000100 ,
-b1000100 O
 #136
 0#
 #140
 1#
-#141
-b1000100 !
-b1000100 5
-b1000100 N
-#143
-b1001000 ,
-b1001000 O
 #144
 0#
 #148
 1#
-#149
-b1001000 !
-b1001000 5
-b1001000 N
-#151
-b1001100 ,
-b1001100 O
 #152
 0#
 #156
 1#
-#157
-b1001100 !
-b1001100 5
-b1001100 N
-#159
-b1010000 ,
-b1010000 O
 #160
 0#
 #164
 1#
-#165
-b1010000 !
-b1010000 5
-b1010000 N
-#167
-b1010100 ,
-b1010100 O
 #168
 0#
 #172
 1#
-#173
-b1010100 !
-b1010100 5
-b1010100 N
-#175
-b1011000 ,
-b1011000 O
 #176
 0#
 #180
 1#
-#181
-b1011000 !
-b1011000 5
-b1011000 N
-#183
-b1011100 ,
-b1011100 O
 #184
 0#
 #188
 1#
-#189
-b1011100 !
-b1011100 5
-b1011100 N
-#191
-b1100000 ,
-b1100000 O
 #192
 0#
 #196
 1#
-#197
-b1100000 !
-b1100000 5
-b1100000 N
-#199
-b1100100 ,
-b1100100 O
 #200
 0#
 #204
 1#
-#205
-b1100100 !
-b1100100 5
-b1100100 N
-#207
-b1101000 ,
-b1101000 O
 #208
 0#
 #212
 1#
-#213
-b1101000 !
-b1101000 5
-b1101000 N
-#215
-b1101100 ,
-b1101100 O
 #216
 0#
 #220
 1#
-#221
-b1101100 !
-b1101100 5
-b1101100 N
-#223
-b1110000 ,
-b1110000 O
 #224
 0#
 #228
 1#
-#229
-b1110000 !
-b1110000 5
-b1110000 N
-#231
-b1110100 ,
-b1110100 O
 #232
 0#
 #236
 1#
-#237
-b1110100 !
-b1110100 5
-b1110100 N
-#239
-b1111000 ,
-b1111000 O
 #240
 0#
 #244
 1#
-#245
-b1111000 !
-b1111000 5
-b1111000 N
-#247
-b1111100 ,
-b1111100 O
 #248
 0#
 #252
 1#
-#253
-b1111100 !
-b1111100 5
-b1111100 N
-#255
-b10000000 ,
-b10000000 O
 #256
 0#
 #260
 1#
-#261
-b10000000 !
-b10000000 5
-b10000000 N
-#263
-b10000100 ,
-b10000100 O
 #264
 0#
 #268
 1#
-#269
-b10000100 !
-b10000100 5
-b10000100 N
-#271
-b10001000 ,
-b10001000 O
 #272
 0#
 #276
 1#
-#277
-b10001000 !
-b10001000 5
-b10001000 N
-#279
-b10001100 ,
-b10001100 O
 #280
 0#
 #284
 1#
-#285
-b10001100 !
-b10001100 5
-b10001100 N
-#287
-b10010000 ,
-b10010000 O
 #288
 0#
 #292
 1#
-#293
-b10010000 !
-b10010000 5
-b10010000 N
-#295
-b10010100 ,
-b10010100 O
 #296
 0#
 #300
 1#
-#301
-b10010100 !
-b10010100 5
-b10010100 N
-#303
-b10011000 ,
-b10011000 O
 #304
 0#
 #308
 1#
-#309
-b10011000 !
-b10011000 5
-b10011000 N
-#311
-b10011100 ,
-b10011100 O
 #312
 0#
 #316
 1#
-#317
-b10011100 !
-b10011100 5
-b10011100 N
-#319
-b10100000 ,
-b10100000 O
 #320
 0#
 #324
 1#
-#325
-b10100000 !
-b10100000 5
-b10100000 N
-#327
-b10100100 ,
-b10100100 O
 #328
 0#
 #332
 1#
-#333
-b10100100 !
-b10100100 5
-b10100100 N
-#335
-b10101000 ,
-b10101000 O
 #336
 0#
 #340
 1#
-#341
-b10101000 !
-b10101000 5
-b10101000 N
-#343
-b10101100 ,
-b10101100 O
 #344
 0#
 #348
 1#
-#349
-b10101100 !
-b10101100 5
-b10101100 N
-#351
-b10110000 ,
-b10110000 O
 #352
 0#
 #356
 1#
-#357
-b10110000 !
-b10110000 5
-b10110000 N
-#359
-b10110100 ,
-b10110100 O
 #360
 0#
 #364
 1#
-#365
-b10110100 !
-b10110100 5
-b10110100 N
-#367
-b10111000 ,
-b10111000 O
 #368
 0#
 #372
 1#
-#373
-b10111000 !
-b10111000 5
-b10111000 N
-#375
-b10111100 ,
-b10111100 O
 #376
 0#
 #380
 1#
-#381
-b10111100 !
-b10111100 5
-b10111100 N
-#383
-b11000000 ,
-b11000000 O
 #384
 0#
 #388
 1#
-#389
-b11000000 !
-b11000000 5
-b11000000 N
-#391
-b11000100 ,
-b11000100 O
 #392
 0#
 #396
 1#
-#397
-b11000100 !
-b11000100 5
-b11000100 N
-#399
-b11001000 ,
-b11001000 O
 #400
 0#
 #404
 1#
-#405
-b11001000 !
-b11001000 5
-b11001000 N
-#407
-b11001100 ,
-b11001100 O
 #408
 0#
 #412
 1#
-#413
-b11001100 !
-b11001100 5
-b11001100 N
-#415
-b11010000 ,
-b11010000 O
 #416
 0#
 #420
 1#
-#421
-b11010000 !
-b11010000 5
-b11010000 N
-#423
-b11010100 ,
-b11010100 O
 #424
 0#
 #428
 1#
-#429
-b11010100 !
-b11010100 5
-b11010100 N
-#431
-b11011000 ,
-b11011000 O
 #432
 0#
 #436
 1#
-#437
-b11011000 !
-b11011000 5
-b11011000 N
-#439
-b11011100 ,
-b11011100 O
 #440
 0#
 #444
 1#
-#445
-b11011100 !
-b11011100 5
-b11011100 N
-#447
-b11100000 ,
-b11100000 O
 #448
 0#
 #452
 1#
-#453
-b11100000 !
-b11100000 5
-b11100000 N
-#455
-b11100100 ,
-b11100100 O
 #456
 0#
 #460
 1#
-#461
-b11100100 !
-b11100100 5
-b11100100 N
-#463
-b11101000 ,
-b11101000 O
 #464
 0#
 #468
 1#
-#469
-b11101000 !
-b11101000 5
-b11101000 N
-#471
-b11101100 ,
-b11101100 O
 #472
 0#
 #476
 1#
-#477
-b11101100 !
-b11101100 5
-b11101100 N
-#479
-b11110000 ,
-b11110000 O
 #480
 0#
 #484
 1#
-#485
-b11110000 !
-b11110000 5
-b11110000 N
-#487
-b11110100 ,
-b11110100 O
 #488
 0#
 #492
 1#
-#493
-b11110100 !
-b11110100 5
-b11110100 N
-#495
-b11111000 ,
-b11111000 O
 #496
 0#
 #500
 1#
-#501
-b11111000 !
-b11111000 5
-b11111000 N
-#503
-b11111100 ,
-b11111100 O
 #504
 0#
 #505

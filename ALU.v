@@ -51,12 +51,13 @@
 
 endmodule*/
 
-module alu(DATA1,DATA2,RESULT,SELECT);
+module alu(DATA1,DATA2,RESULT,SELECT,ZERO);
 
     input  [7:0] DATA1 ;
     input  [7:0] DATA2 ;//defining inputs and outputs all wires exept for the result register
     input  [2:0] SELECT ;
     output reg [7:0] RESULT;//has to be register type, as RESULT is assigned values in an always @ block
+    output reg ZERO;//for outputting whether inputs are equal or not
 
     wire [7:0] forward_out,add_out,and_out,or_out;//wires inside the alu
 
@@ -64,6 +65,13 @@ module alu(DATA1,DATA2,RESULT,SELECT);
     ADD Add(DATA1,DATA2,add_out);
     AND And(DATA1,DATA2,and_out) ;
     OR Or(DATA1,DATA2,or_out) ;
+
+    always @ (add_out) begin //setting out for beq instructions
+        if ( add_out == 0 )
+            ZERO = 1 ;     
+        else
+            ZERO = 0 ;
+    end
 
    always @ (SELECT,forward_out,add_out,and_out,or_out) begin//run whenever inputs are changed
 
@@ -117,5 +125,15 @@ module OR(DATA1,DATA2,RESULT) ;//module for bitwise or operation
     output [7:0] RESULT;
 
     assign #1 RESULT = DATA1 | DATA2;//ORing the data and continuesly assigning the wire RESULT with an artifitial delay
+
+endmodule
+
+module SUB(DATA1,DATA2,RESULT) ;//module for bitwise or operation
+
+    input [7:0] DATA1 ;
+    input [7:0] DATA2 ;
+    output [7:0] RESULT;
+
+    assign #1 RESULT = DATA1 - DATA2;//ORing the data and continuesly assigning the wire RESULT with an artifitial delay
 
 endmodule

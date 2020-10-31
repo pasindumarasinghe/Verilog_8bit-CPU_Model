@@ -109,7 +109,7 @@ module reg_file(IN,OUT1,OUT2,INADDRESS,OUT1ADDRESS,OUT2ADDRESS, WRITE, CLK, RESE
 
     assign #2 OUT1 = REG_FILE[OUT1ADDRESS] ;//continuously assigning the values in the regisers to output ports with a delay
 
-    assign#2 OUT2 = REG_FILE[OUT2ADDRESS] ;
+    assign #2 OUT2 = REG_FILE[OUT2ADDRESS] ;
 
     always @ (posedge CLK) begin//at the positive edge of the clock signal
         if (RESET) begin//if reset signal is enabled, assign registers to  all zeros
