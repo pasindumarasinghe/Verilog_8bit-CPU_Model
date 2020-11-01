@@ -1,5 +1,5 @@
 $date
-	Fri Oct 30 22:22:11 2020
+	Sun Nov  1 14:47:27 2020
 $end
 $version
 	Icarus Verilog
@@ -13,27 +13,27 @@ $var wire 32 " INSTRUCTION [31:0] $end
 $var reg 1 # CLK $end
 $var reg 1 $ RESET $end
 $scope module mycpu $end
-$var wire 1 % BRANCH_FALG $end
 $var wire 1 # CLK $end
-$var wire 32 & INSTRUCTION [31:0] $end
-$var wire 1 ' JUMP_FALG $end
+$var wire 32 % INSTRUCTION [31:0] $end
 $var wire 1 $ RESET $end
-$var wire 1 ( ZERO_AND_BRANCHFLAG $end
-$var wire 1 ) ZERO $end
-$var wire 3 * WRITEREG [2:0] $end
-$var wire 1 + WRITEENABLE $end
-$var wire 8 , REGOUT2 [7:0] $end
-$var wire 8 - REGOUT1 [7:0] $end
-$var wire 3 . READREG2 [2:0] $end
-$var wire 3 / READREG1 [2:0] $end
-$var wire 32 0 PC_PLUS4 [31:0] $end
-$var wire 32 1 PC_NEXT_JUMP [31:0] $end
-$var wire 32 2 JUMP_IMMEDIATE_RAW [31:0] $end
-$var wire 32 3 JUMP_IMMEDIATE_FINAL [31:0] $end
-$var wire 1 4 IMMEDIATE_FALG $end
-$var wire 8 5 IMMEDIATE [7:0] $end
-$var wire 1 6 COMPLEMENT_FLAG $end
-$var wire 8 7 COMPLEMENTED_OUT [7:0] $end
+$var wire 1 & ZERO_AND_BRANCHFLAG $end
+$var wire 1 ' ZERO $end
+$var wire 3 ( WRITEREG [2:0] $end
+$var wire 1 ) WRITEENABLE $end
+$var wire 8 * REGOUT2 [7:0] $end
+$var wire 8 + REGOUT1 [7:0] $end
+$var wire 3 , READREG2 [2:0] $end
+$var wire 3 - READREG1 [2:0] $end
+$var wire 32 . PC_PLUS4 [31:0] $end
+$var wire 32 / PC_NEXT_JUMP [31:0] $end
+$var wire 8 0 JUMP_IMMEDIATE_RAW [7:0] $end
+$var wire 32 1 JUMP_IMMEDIATE_FINAL [31:0] $end
+$var wire 1 2 JUMP_FALG $end
+$var wire 1 3 IMMEDIATE_FALG $end
+$var wire 8 4 IMMEDIATE [7:0] $end
+$var wire 1 5 COMPLEMENT_FLAG $end
+$var wire 8 6 COMPLEMENTED_OUT [7:0] $end
+$var wire 1 7 BRANCH_FALG $end
 $var wire 8 8 ALU_RESULT [7:0] $end
 $var wire 3 9 ALUOP [2:0] $end
 $var reg 8 : COMPLEMENT_MUX_OUT [7:0] $end
@@ -50,7 +50,7 @@ $var wire 8 C add_out [7:0] $end
 $var wire 3 D SELECT [2:0] $end
 $var wire 8 E DATA1 [7:0] $end
 $var reg 8 F RESULT [7:0] $end
-$var reg 1 ) ZERO $end
+$var reg 1 ' ZERO $end
 $scope module Add $end
 $var wire 8 G DATA2 [7:0] $end
 $var wire 8 H RESULT [7:0] $end
@@ -79,40 +79,38 @@ $scope module ctrlUnit $end
 $var wire 32 T INSTRUCTION [31:0] $end
 $var wire 8 U opcode [7:0] $end
 $var reg 3 V ALUOP [2:0] $end
-$var reg 1 W BRANCH_FALG $end
-$var reg 1 6 COMPLEMENT_FLAG $end
-$var reg 1 4 IMMEDIATE_FALG $end
-$var reg 1 X JUMP_FALG $end
-$var reg 1 + WRITEENABLE $end
+$var reg 1 7 BRANCH_FALG $end
+$var reg 1 5 COMPLEMENT_FLAG $end
+$var reg 1 3 IMMEDIATE_FALG $end
+$var reg 1 2 JUMP_FALG $end
+$var reg 1 ) WRITEENABLE $end
 $upscope $end
 $scope module pcJumpNext $end
-$var wire 32 Y JUMP_IMMEDIATE_FINAL [31:0] $end
-$var wire 32 Z PC_PLUS4 [31:0] $end
-$var wire 32 [ PC_NEXT_JUMP [31:0] $end
+$var wire 32 W JUMP_IMMEDIATE_FINAL [31:0] $end
+$var wire 32 X PC_PLUS4 [31:0] $end
+$var wire 32 Y PC_NEXT_JUMP [31:0] $end
 $upscope $end
 $scope module pcNext $end
-$var wire 32 \ PC [31:0] $end
-$var wire 32 ] PC_PLUS4 [31:0] $end
+$var wire 32 Z PC [31:0] $end
+$var wire 32 [ PC_PLUS4 [31:0] $end
 $upscope $end
 $scope module regFile $end
 $var wire 1 # CLK $end
-$var wire 8 ^ IN [7:0] $end
-$var wire 3 _ INADDRESS [2:0] $end
-$var wire 8 ` OUT1 [7:0] $end
-$var wire 3 a OUT1ADDRESS [2:0] $end
-$var wire 8 b OUT2 [7:0] $end
-$var wire 3 c OUT2ADDRESS [2:0] $end
+$var wire 8 \ IN [7:0] $end
+$var wire 3 ] INADDRESS [2:0] $end
+$var wire 8 ^ OUT1 [7:0] $end
+$var wire 3 _ OUT1ADDRESS [2:0] $end
+$var wire 8 ` OUT2 [7:0] $end
+$var wire 3 a OUT2ADDRESS [2:0] $end
 $var wire 1 $ RESET $end
-$var wire 1 + WRITE $end
-$var integer 32 d i [31:0] $end
+$var wire 1 ) WRITE $end
+$var integer 32 b i [31:0] $end
 $upscope $end
 $upscope $end
 $upscope $end
 $enddefinitions $end
 #0
 $dumpvars
-bx d
-bx c
 bx b
 bx a
 bx `
@@ -122,9 +120,9 @@ bx ]
 bx \
 bx [
 bx Z
-bx00 Y
-xX
-xW
+bx Y
+bx X
+bx00 W
 bx V
 bx U
 bx T
@@ -156,65 +154,69 @@ bx ;
 bx :
 bx 9
 bx 8
-bx 7
-x6
-bx 5
-x4
-bx00 3
-b0xxxxxxxx 2
-bx 1
+x7
+bx 6
+x5
+bx 4
+x3
+x2
+bx00 1
 bx 0
 bx /
 bx .
 bx -
 bx ,
-x+
+bx +
 bx *
 x)
-x(
-z'
-bx &
-z%
+bx (
+x'
+x&
+bx %
 1$
 0#
 bx "
 bx !
 $end
 #4
-b1000 d
+b1000 b
 1#
 #5
 b0 !
 b0 =
-b0 \
+b0 Z
 0$
+#6
+b100 .
+b100 X
+b100 [
 #7
-b0 *
-b0 _
-b1 /
-b1 a
-b0 .
-b0 c
-b0 3
-b0 Y
-b0 5
-b0 2
+b0 (
+b0 ]
+b1 -
+b1 _
+b0 ,
+b0 a
+b0 4
+b0 1
+b0 W
+b0 0
 b1 U
-b100 0
-b100 Z
-b100 ]
 b1000000000000000100000000 "
-b1000000000000000100000000 &
+b1000000000000000100000000 %
 b1000000000000000100000000 T
 #8
+0<
+b0 >
+0&
 b0 9
 b0 D
 b0 V
-0X
-0W
-04
-06
-1+
+02
+07
+03
+05
+1)
 0#
 #9
 b0 ;
@@ -224,96 +226,37 @@ b0 J
 b0 M
 b0 O
 b0 :
-b0 -
+b0 +
 b0 E
 b0 I
 b0 L
 b0 Q
-b0 `
-b0 ,
+b0 ^
+b0 *
 b0 R
-b0 b
-b100 1
-b100 [
+b0 `
+b100 /
+b100 Y
 #10
 b0 8
 b0 F
-b0 ^
+b0 \
 b0 @
 b0 P
 b0 A
 b0 N
 b0 B
 b0 K
-b0 7
+b0 6
 b0 S
 #11
-1)
+1'
 b0 C
 b0 H
 #12
 1#
-#13
-bx !
-bx =
-bx \
-#15
-bx *
-bx _
-bx /
-bx a
-bx .
-bx c
-bx00 3
-bx00 Y
-bx 5
-b0xxxxxxxx 2
-bx U
-bx 0
-bx Z
-bx ]
-bx "
-bx &
-bx T
 #16
-0+
 0#
-#17
-bx ;
-bx ?
-bx G
-bx J
-bx M
-bx O
-bx :
-bx -
-bx E
-bx I
-bx L
-bx Q
-bx `
-bx ,
-bx R
-bx b
-bx 1
-bx [
-#18
-bx 8
-bx F
-bx ^
-bx B
-bx K
-bx A
-bx N
-bx @
-bx P
-bx 7
-bx S
-#19
-0(
-0)
-bx C
-bx H
 #20
 1#
 #24

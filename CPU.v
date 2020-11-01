@@ -5,7 +5,7 @@ module cpu(PC, INSTRUCTION, CLK, RESET);
 
     input CLK,RESET;
     output reg [31:0] PC;//need to store the value of pc to be output 
-    input [31:0] INSTRUCTION; 
+    input [31:0] INSTRUCTION;
 
     wire WRITEENABLE;
     wire [31:0] PC_PLUS4;//this wire holds the PC+4 adder's output until the next posedge 
@@ -29,7 +29,7 @@ module cpu(PC, INSTRUCTION, CLK, RESET);
     wire ZERO_AND_BRANCHFLAG;//to be used as a mux input 
     reg MUX_3_OUT;//to be used as the fourth mux's input
     wire [31:0] JUMP_IMMEDIATE_FINAL;
-    wire [31:0] JUMP_IMMEDIATE_RAW;    
+    wire [7:0] JUMP_IMMEDIATE_RAW;    
 
     //register file inputs
     wire [2:0] READREG1;
@@ -41,10 +41,10 @@ module cpu(PC, INSTRUCTION, CLK, RESET);
     assign READREG1 = INSTRUCTION[15:8];
     assign READREG2 = INSTRUCTION[7:0];
     assign IMMEDIATE = INSTRUCTION[7:0];
-    assign JUMP_IMMEDIATE_RAW = INSTRUCTION[23:16];
+    assign JUMP_IMMEDIATE_RAW =INSTRUCTION[23:16];
 	
     //instantiating the modules control unit, pc adder, reg file, alu and the complementor
-    control_unit ctrlUnit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG);
+    control_unit ctrlUnit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG,BRANCH_FALG,JUMP_FALG);
     pc_adder pcNext(PC,PC_PLUS4);
     pc_adder_jump pcJumpNext(PC_PLUS4,PC_NEXT_JUMP,JUMP_IMMEDIATE_FINAL);
     reg_file regFile(ALU_RESULT,REGOUT1,REGOUT2,WRITEREG,READREG1,READREG2, WRITEENABLE, CLK, RESET);
@@ -72,8 +72,8 @@ module cpu(PC, INSTRUCTION, CLK, RESET);
         endcase
     end
     
-    always @ (PC_NEXT_JUMP,BRANCH_FALG,PC_PLUS4) begin//mux 3 (where immediate value or mux 1's out is choosen)
-        case (BRANCH_FALG)
+    always @ (PC_NEXT_JUMP,ZERO_AND_BRANCHFLAG,PC_PLUS4) begin//mux 3 (where immediate value or mux 1's out is choosen)
+        case (ZERO_AND_BRANCHFLAG)
             0 : MUX_3_OUT <= PC_PLUS4;//PC + 4 value
             1 : MUX_3_OUT <= PC_NEXT_JUMP;//immediate value added PC
         endcase
@@ -96,7 +96,7 @@ module cpu(PC, INSTRUCTION, CLK, RESET);
 endmodule
 
 
-module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG);
+module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG,BRANCH_FALG,JUMP_FALG);
     
     input [31:0] INSTRUCTION;
     output reg WRITEENABLE;
@@ -176,10 +176,10 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
                 ALUOP <= #1 3'b010;//beq==>add
             end
             default : begin              
-                WRITEENABLE <= #1 0;
-                COMPLEMENT_FLAG <= #1 0;
-                IMMEDIATE_FALG <= #1 0;
-                ALUOP <= #1 3'b000;    
+                WRITEENABLE <= #1 1'bz;
+                COMPLEMENT_FLAG <= #1 1'bz;
+                IMMEDIATE_FALG <= #1 1'bz;
+                ALUOP <= #1 3'bzzz;    
             end
         endcase  
     end
@@ -199,7 +199,7 @@ module pc_adder(PC,PC_PLUS4);
     input [31:0] PC;
     output [31:0] PC_PLUS4;
 
-    assign #2 PC_PLUS4 = PC + 32'b0100;//MSBs are filled with 0s
+    assign #1 PC_PLUS4 = PC + 32'b0100;//MSBs are filled with 0s
 
 endmodule
 
