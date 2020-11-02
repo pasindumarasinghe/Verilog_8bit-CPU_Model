@@ -15,8 +15,10 @@ module cpu(PC, INSTRUCTION, CLK, RESET);
 
     wire COMPLEMENT_FLAG;//control signal for the mux 1 (where complemented or original value is choosen)
     wire IMMEDIATE_FALG;//control signal for the mux 2 (where immediate value or mux 1's out is choosen)
-    wire BRANCH_FALG;//control signal for the mux3 (choose between immediate value added PC or PC+4)
+    wire BRANCH_FALG;//to be anded with ZERO 
     wire JUMP_FALG;//control signal for the mux4 (choose between immediate value added PC or mux3 out)
+    wire ZERO_AND_BRANCHFLAG;//control signal for the mux3 (choose between immediate value added PC or PC+4)
+    wire ZERO;//to be used in BEQ instructions
     
     wire [7:0] REGOUT1;//registerfile out 1
     wire [7:0] REGOUT2;//registerfile out 2
@@ -25,9 +27,7 @@ module cpu(PC, INSTRUCTION, CLK, RESET);
     reg [7:0] IMMEDIATE_MUX_OUT;//output from the mux 2 (immediate)
     wire [7:0] IMMEDIATE;//immediate value from the control unit 
     wire [7:0] ALU_RESULT;
-    wire ZERO;//to be used in BEQ instructions
-    wire ZERO_AND_BRANCHFLAG;//to be used as a mux input 
-    reg MUX_3_OUT;//to be used as the fourth mux's input
+    reg [31:0] MUX_3_OUT;//to be used as the fourth mux's input
     wire [31:0] JUMP_IMMEDIATE_FINAL;
     wire [7:0] JUMP_IMMEDIATE_RAW;    
 
@@ -57,7 +57,10 @@ module cpu(PC, INSTRUCTION, CLK, RESET);
     //left shifting by 2 (as the jump instruction immediate offset comes in terms of instructions) is achived by wiring
     //sign is extended by concatenating the MSB 24 times
     assign JUMP_IMMEDIATE_FINAL= {{22{JUMP_IMMEDIATE_RAW[7]}},JUMP_IMMEDIATE_RAW[7:0],2'b00};
-
+    //                                   ^^                                             ^^
+    //                                   ||                                             ||
+    //                                 sign extention                               left shifting    
+    
     always @ (REGOUT2,COMPLEMENTED_OUT,COMPLEMENT_FLAG) begin//mux 1 (where complemented or original value is choosen)
         case (COMPLEMENT_FLAG)
             0 : COMPLEMENT_MUX_OUT <= REGOUT2;//original value
@@ -72,7 +75,7 @@ module cpu(PC, INSTRUCTION, CLK, RESET);
         endcase
     end
     
-    always @ (PC_NEXT_JUMP,ZERO_AND_BRANCHFLAG,PC_PLUS4) begin//mux 3 (where immediate value or mux 1's out is choosen)
+    always @ (PC_NEXT_JUMP,ZERO_AND_BRANCHFLAG,PC_PLUS4) begin//mux 3 (where immediate offset or mux 1's out is choosen)
         case (ZERO_AND_BRANCHFLAG)
             0 : MUX_3_OUT <= PC_PLUS4;//PC + 4 value
             1 : MUX_3_OUT <= PC_NEXT_JUMP;//immediate value added PC
