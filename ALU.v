@@ -59,12 +59,13 @@ module alu(DATA1,DATA2,RESULT,SELECT,ZERO);
     output reg [7:0] RESULT;//has to be register type, as RESULT is assigned values in an always @ block
     output reg ZERO;//for outputting whether inputs are equal or not
 
-    wire [7:0] forward_out,add_out,and_out,or_out;//wires inside the alu
+    wire [7:0] forward_out,add_out,and_out,or_out,ror_out;//wires inside the alu
 
     FORWARD Forward(DATA2,forward_out);//instantiating modules with individual output wires for each
     ADD Add(DATA1,DATA2,add_out);
     AND And(DATA1,DATA2,and_out) ;
     OR Or(DATA1,DATA2,or_out) ;
+    ROTATE_RIGHT ROR(DATA1,DATA2,ror_out);
 
     always @ (add_out) begin //setting out for beq instructions
         if ( add_out == 0 )
@@ -73,7 +74,7 @@ module alu(DATA1,DATA2,RESULT,SELECT,ZERO);
             ZERO = 0 ;
     end
 
-   always @ (SELECT,forward_out,add_out,and_out,or_out) begin//run whenever inputs are changed
+   always @ (SELECT,forward_out,add_out,and_out,or_out,ror_out) begin//run whenever inputs are changed
 
     case (SELECT)
 
@@ -81,6 +82,7 @@ module alu(DATA1,DATA2,RESULT,SELECT,ZERO);
     3'b001 :  RESULT = add_out;
     3'b010 :  RESULT = and_out;
     3'b011 :  RESULT = or_out;
+
     default :  RESULT =forward_out;
     
     endcase
@@ -128,12 +130,51 @@ module OR(DATA1,DATA2,RESULT) ;//module for bitwise or operation
 
 endmodule
 
-module SUB(DATA1,DATA2,RESULT) ;//module for bitwise or operation
+module LOGICAL_SHIFT(DATA1,IMMEDIATE_VALUE,RESULT) ;//module for bitwise or operation
 
     input [7:0] DATA1 ;
-    input [7:0] DATA2 ;
+    input signed [7:0] IMMEDIATE_VALUE;
     output [7:0] RESULT;
 
-    assign #1 RESULT = DATA1 - DATA2;//ORing the data and continuesly assigning the wire RESULT with an artifitial delay
+    wire [7:0] shift_amount;
+   
+   always @ (DATA1,IMMEDIATE_VALUE) begin
+       case(IMMEDIATE_VALUE[7])//check the MSB for sign
+           0:begin//if the value is positive
+               shift_amount = IMMEDIATE_VALUE;
+               RESULT = {{shift_amount*{DATA1[7]}},DATA1[7:IMMEDIATE_VALUE]};
+           end           
+           1:begin//if the value is negative
+               shift_amount = -IMMEDIATE_VALUE;
+               RESULT = {DATA1[7-shift_amount:0],{shift_amount*{1'0}}};               
+           end
+       endcase
+   end
+endmodule
+
+module ROTATE_RIGHT(DATA_IN,IMMEDIATE_VALUE,RESULT);
+
+    input [7:0] DATA_IN;
+    input [7:0] IMMEDIATE_VALUE;
+    output [7:0] RESULT;
+
+    always @ (DATA_IN,IMMEDIATE_VALUE) begin
+        RESULT =  {DATA_IN[IMMEDIATE_VALUE-1'b1:0],DATA_IN[7:IMMEDIATE_VALUE]};        
+    end
+endmodule
+
+module ARITHMATIC_SHIFT_RIGHT(DATA_IN,IMMEDIATE_VALUE,RESULT);
+
+    input [7:0] DATA_IN;
+    input [7:0] IMMEDIATE_VALUE;
+    output [7:0] RESULT;
+
+    always @ (IMMEDIATE_VALUE,DATA_IN) begin
+        RESULT = {{IMMEDIATE_VALUE*{1'b0}},DATA_IN[7:IMMEDIATE_VALUE]};
+    end
+
+endmodule
+
+module MULTIPLY(DATA_IN,IMMEDIATE_VALUE,RESULT);
 
 endmodule
