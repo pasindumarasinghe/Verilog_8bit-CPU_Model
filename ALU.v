@@ -59,14 +59,17 @@ module alu(DATA1,DATA2,RESULT,SELECT,ZERO);
     output reg [7:0] RESULT;//has to be register type, as RESULT is assigned values in an always @ block
     output reg ZERO;//for outputting whether inputs are equal or not
 
-    wire [7:0] forward_out,add_out,and_out,or_out,ror_out;//wires inside the alu
+    wire [7:0] forward_out,add_out,and_out,or_out,ror_out,mul_out,sra_out,shiftl_out;//wires inside the alu
 
     FORWARD Forward(DATA2,forward_out);//instantiating modules with individual output wires for each
     ADD Add(DATA1,DATA2,add_out);
-    AND And(DATA1,DATA2,and_out) ;
-    OR Or(DATA1,DATA2,or_out) ;
+    AND And(DATA1,DATA2,and_out);
+    OR Or(DATA1,DATA2,or_out);
     ROTATE_RIGHT ROR(DATA1,DATA2,ror_out);
-
+    MULTIPLY mul(DATA_IN,IMMEDIATE_VALUE,mul_out);
+    ARITHMATIC_SHIFT_RIGHT sra(DATA_IN,IMMEDIATE_VALUE,sra_out);
+    LOGICAL_SHIFT sl(DATA1,IMMEDIATE_VALUE,shiftl_out);
+    
     always @ (add_out) begin //setting out for beq instructions
         if ( add_out == 0 )
             ZERO = 1 ;     
