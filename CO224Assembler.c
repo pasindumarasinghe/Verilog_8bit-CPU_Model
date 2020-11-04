@@ -50,10 +50,10 @@ int main( int argc, char *argv[] )
 	char *op_or 	= "00000101";
 	char *op_j		= "00000110";
 	char *op_beq	= "00000111";
-	char *op_lwd 	= "00001000";
-	char *op_lwi 	= "00001001";
-	char *op_swd 	= "00001010";
-	char *op_swi 	= "00001011";
+	char *op_BNE 	= "00001000";  //EXTENDED ISA  
+	char *op_ROR 	= "00001001";  //EXTENDED ISA
+	char *op_SRL 	= "00001010";  //EXTENDED ISA
+	char *op_SLL 	= "00001011";  //EXTENDED ISA
 	/************************************************************************/
 	
 	const char delim[] = " ";
@@ -149,10 +149,10 @@ int main( int argc, char *argv[] )
 			else if(strcasecmp(in_token,"or")==0) strcpy(out_token, op_or);
 			else if(strcasecmp(in_token,"j")==0) strcpy(out_token, op_j);
 			else if(strcasecmp(in_token,"beq")==0) strcpy(out_token, op_beq);
-			else if(strcasecmp(in_token,"lwd")==0) strcpy(out_token, op_lwd);
-			else if(strcasecmp(in_token,"lwi")==0) strcpy(out_token, op_lwi);
-			else if(strcasecmp(in_token,"swd")==0) strcpy(out_token, op_swd);
-			else if(strcasecmp(in_token,"swi")==0) strcpy(out_token, op_swi);
+			else if(strcasecmp(in_token,"bne")==0) strcpy(out_token, op_BNE);//EXTENDED ISA
+			else if(strcasecmp(in_token,"ror")==0) strcpy(out_token, op_ROR);//EXTENDED ISA
+			else if(strcasecmp(in_token,"srl")==0) strcpy(out_token, op_SRL);//EXTENDED ISA
+			else if(strcasecmp(in_token,"sll")==0) strcpy(out_token, op_SLL);//EXTENDED ISA
 
 			// Encoding register numbers
 			else if(strcmp(in_token,"0")==0 || strcmp(in_token,"0\n")==0) strcpy(out_token, "00000000");
