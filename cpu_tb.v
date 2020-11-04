@@ -14,7 +14,7 @@ module cpu_tb;
     reg [7:0] instr_mem[0:1023];//instruction memory array
 
     //taking 4 contiguous memory locations to create an instruction
-    assign #2 INSTRUCTION = {instr_mem[PC],instr_mem[PC+32'b0001],instr_mem[PC+32'b0010],instr_mem[PC+32'b0011]};
+    assign #2 INSTRUCTION = {instr_mem[PC+32'b0011],instr_mem[PC+32'b0010],instr_mem[PC+32'b0001],instr_mem[PC]};
     
     /* 
     ------------------------
@@ -39,8 +39,9 @@ module cpu_tb;
         */
         // METHOD 2: loading instr_mem content from instr_mem.mem file
         $readmemb("instr_mem.mem", instr_mem);
+
     end
-    
+
     /* 
     -----
      CPU

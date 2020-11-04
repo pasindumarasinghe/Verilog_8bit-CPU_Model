@@ -55,7 +55,7 @@ module cpu(PC, INSTRUCTION, CLK, RESET);
     assign ZERO_AND_BRANCHFLAG = ZERO & BRANCH_FALG;
 
     //left shifting by 2 (as the jump instruction immediate offset comes in terms of instructions) is achived by wiring
-    //sign is extended by concatenating the MSB 24 times
+    //sign is extended by concatenating the MSB 22 times
     assign JUMP_IMMEDIATE_FINAL= {{22{JUMP_IMMEDIATE_RAW[7]}},JUMP_IMMEDIATE_RAW[7:0],2'b00};
     //                                   ^^                                             ^^
     //                                   ||                                             ||
@@ -174,7 +174,7 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
                 WRITEENABLE <= #1 0;
                 COMPLEMENT_FLAG <= #1 1;
                 IMMEDIATE_FALG <= #1 0;
-                BRANCH_FALG <=#1 1;//branch flag is set to 0
+                BRANCH_FALG <=#1 1;//branch flag is set to 1
                 JUMP_FALG <=#1 0;
                 ALUOP <= #1 3'b010;//beq==>add
             end
