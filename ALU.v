@@ -153,7 +153,7 @@ module LOGICAL_SHIFT(DATA1,IMMEDIATE_VALUE,RESULT) ;//module for bitwise or oper
            end           
            1:begin//if the value is negative
                shift_amount = -IMMEDIATE_VALUE;
-               RESULT = {DATA1[7-shift_amount:0],{shift_amount*{1'0}}};               
+               RESULT = {DATA1[7-shift_amount:0],{shift_amount*{1b'0}}};               
            end
        endcase
    end
