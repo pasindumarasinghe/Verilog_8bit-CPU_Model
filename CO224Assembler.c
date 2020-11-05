@@ -54,6 +54,8 @@ int main( int argc, char *argv[] )
 	char *op_ROR 	= "00001001";  //EXTENDED ISA
 	char *op_SRL 	= "00001010";  //EXTENDED ISA
 	char *op_SLL 	= "00001011";  //EXTENDED ISA
+	char *op_SRA	= "00001100";  //EXTENDED ISA
+	char *op_MULT	= "00001101";  //EXTENDED ISA
 	/************************************************************************/
 	
 	const char delim[] = " ";
@@ -153,6 +155,8 @@ int main( int argc, char *argv[] )
 			else if(strcasecmp(in_token,"ror")==0) strcpy(out_token, op_ROR);//EXTENDED ISA
 			else if(strcasecmp(in_token,"srl")==0) strcpy(out_token, op_SRL);//EXTENDED ISA
 			else if(strcasecmp(in_token,"sll")==0) strcpy(out_token, op_SLL);//EXTENDED ISA
+			else if(strcasecmp(in_token,"sra")==0) strcpy(out_token, op_SRA);//EXTENDED ISA
+			else if(strcasecmp(in_token,"mult")==0) strcpy(out_token, op_MULT);//EXTENDED ISA
 
 			// Encoding register numbers
 			else if(strcmp(in_token,"0")==0 || strcmp(in_token,"0\n")==0) strcpy(out_token, "00000000");

@@ -70,7 +70,7 @@ module alu(DATA1,DATA2,RESULT,SELECT,ZERO);
     ARITHMATIC_SHIFT_RIGHT sra(DATA_IN,IMMEDIATE_VALUE,sra_out);
     LOGICAL_SHIFT sl(DATA1,IMMEDIATE_VALUE,shiftl_out);
     
-    always @ (add_out) begin //setting out for beq instructions
+    always @ (add_out) begin //setting out for beq and bne instructions
         if ( add_out == 0 )
             ZERO = 1 ;     
         else
@@ -85,8 +85,12 @@ module alu(DATA1,DATA2,RESULT,SELECT,ZERO);
     3'b001 :  RESULT = add_out;
     3'b010 :  RESULT = and_out;
     3'b011 :  RESULT = or_out;
+    3'b100 :  RESULT = ror_out;
+    3'b101 :  RESULT = mul_out;
+    3'b110 :  RESULT = sra_out;
+    3'b111 :  RESULT = shiftl_out;
 
-    default :  RESULT =forward_out;
+    default :  RESULT =8'bz;
     
     endcase
 
@@ -179,5 +183,36 @@ module ARITHMATIC_SHIFT_RIGHT(DATA_IN,IMMEDIATE_VALUE,RESULT);
 endmodule
 
 module MULTIPLY(DATA_IN,IMMEDIATE_VALUE,RESULT);
+
+    input [0:7] DATA_IN;
+    input [7:0] IMMEDIATE_VALUE;
+    output [7:0] RESULT;
+
+    // integer i; 
+
+    wire [7:0] PRODUCT0,PRODUCT1,PRODUCT2,PRODUCT3,PRODUCT4,PRODUCT5,PRODUCT6,PRODUCT7;//intermediate wires
+    wire [7:0] intermediate1,intermediate2;
+
+    //multiplying one value with each bit of the other, sperately
+    PRODUCT0[3:0] = {4{DATA_IN[0]}} & IMMEDIATE_VALUE[3:0];
+    PRODUCT1[3:0] = {4{DATA_IN[1]}} & IMMEDIATE_VALUE[3:0];
+    PRODUCT2[3:0] = {4{DATA_IN[2]}} & IMMEDIATE_VALUE[3:0];
+    PRODUCT3[3:0] = {4{DATA_IN[3]}} & IMMEDIATE_VALUE[3:0];
+
+    //sign extending and shifting
+    PRODUCT0[7:0] = {4{PRODUCT0[3]},PRODUCT0[3:0]};           
+    PRODUCT1[7:0] = {3{PRODUCT1[3]},PRODUCT1[3:0],1'b0};  
+    PRODUCT2[7:0] = {2{PRODUCT2[3]},PRODUCT2[3:0],2'b00}; 
+    PRODUCT3[7:0] = {1{PRODUCT3[3]},PRODUCT3[3:0],3'b000};
+    
+    // PRODUCT4[7:0] = {4{DATA_IN[4]}} & IMMEDIATE_VALUE[7:0];
+    // PRODUCT5[7:0] = {4{DATA_IN[5]}} & IMMEDIATE_VALUE[7:0];
+    // PRODUCT6[7:0] = {4{DATA_IN[6]}} & IMMEDIATE_VALUE[7:0];
+    // PRODUCT7[7:0] = {4{DATA_IN[7]}} & IMMEDIATE_VALUE[7:0];
+
+    intermediate1 #1 = PRODUCT0 + PRODUCT1 ;
+    intermediate2 #1 = PRODUCT2 + PRODUCT3 ;
+
+    RESULT #1 = intermediate1 + intermediate2;
 
 endmodule
