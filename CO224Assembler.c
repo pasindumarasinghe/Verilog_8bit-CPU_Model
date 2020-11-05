@@ -52,9 +52,9 @@ int main( int argc, char *argv[] )
 	char *op_beq	= "00000111";
 	char *op_BNE 	= "00001000";  //EXTENDED ISA  
 	char *op_ROR 	= "00001001";  //EXTENDED ISA
-	char *op_SRL 	= "00001010";  //EXTENDED ISA
+	char *op_SRA 	= "00001010";  //EXTENDED ISA
 	char *op_SLL 	= "00001011";  //EXTENDED ISA
-	char *op_SRA	= "00001100";  //EXTENDED ISA
+	char *op_SRL	= "00001100";  //EXTENDED ISA
 	char *op_MULT	= "00001101";  //EXTENDED ISA
 	/************************************************************************/
 	
@@ -65,7 +65,7 @@ int main( int argc, char *argv[] )
 	char *in_token;
 	char out_token[] = "00000000";
 	char out_file[256];
-
+	
 	strcpy(out_file,argv[1]);
 	strcat(out_file,".machine");
 
@@ -153,9 +153,9 @@ int main( int argc, char *argv[] )
 			else if(strcasecmp(in_token,"beq")==0) strcpy(out_token, op_beq);
 			else if(strcasecmp(in_token,"bne")==0) strcpy(out_token, op_BNE);//EXTENDED ISA
 			else if(strcasecmp(in_token,"ror")==0) strcpy(out_token, op_ROR);//EXTENDED ISA
-			else if(strcasecmp(in_token,"srl")==0) strcpy(out_token, op_SRL);//EXTENDED ISA
-			else if(strcasecmp(in_token,"sll")==0) strcpy(out_token, op_SLL);//EXTENDED ISA
 			else if(strcasecmp(in_token,"sra")==0) strcpy(out_token, op_SRA);//EXTENDED ISA
+			else if(strcasecmp(in_token,"sll")==0) strcpy(out_token, op_SLL);//EXTENDED ISA
+			else if(strcasecmp(in_token,"srl")==0) strcpy(out_token, op_SRL);//EXTENDED ISA
 			else if(strcasecmp(in_token,"mult")==0) strcpy(out_token, op_MULT);//EXTENDED ISA
 
 			// Encoding register numbers

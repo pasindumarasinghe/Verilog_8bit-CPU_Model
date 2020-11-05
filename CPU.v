@@ -222,14 +222,14 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
                 IMMEDIATE_COMPLEMENT_FLAG = #1 0;
                 ALUOP <= #1 3'b100;//ror==>ror
             end
-            8'00001010 : begin//srl instruction ; alu performs an add operation with the complemented data2 value         
+            8'00001010 : begin//sra instruction ; alu performs an add operation with the complemented data2 value         
                 WRITEENABLE <= #1 1;
                 COMPLEMENT_FLAG <= #1 0;
                 IMMEDIATE_FALG <= #1 1;
                 BRANCH_FALG <=#1 0;
                 JUMP_FALG <=#1 0;
                 IMMEDIATE_COMPLEMENT_FLAG = #1 0;
-                ALUOP <= #1 3'b111;//srl==>shift_logical
+                ALUOP <= #1 3'b111;//sra==>shift_logical
             end
             8'00001011 : begin//sll instruction ; alu performs an add operation with the complemented data2 value         
                 WRITEENABLE <= #1 1;
@@ -240,14 +240,14 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
                 IMMEDIATE_COMPLEMENT_FLAG = #1 1;
                 ALUOP <= #1 3'b010;//sll==>shift_logical
             end
-            8'00001100 : begin//sra instruction ; alu performs an add operation with the complemented data2 value         
+            8'00001100 : begin//srl instruction ; alu performs an add operation with the complemented data2 value         
                 WRITEENABLE <= #1 1;
                 COMPLEMENT_FLAG <= #1 0;
                 IMMEDIATE_FALG <= #1 1;
                 BRANCH_FALG <=#1 0;
                 JUMP_FALG <=#1 0;
                 IMMEDIATE_COMPLEMENT_FLAG = #1 0;
-                ALUOP <= #1 3'b110;//sra==>sra
+                ALUOP <= #1 3'b110;//srl==>sra
             end
             8'00001101 : begin//mult instruction ; alu performs an add operation with the complemented data2 value         
                 WRITEENABLE <= #1 1;
@@ -281,7 +281,6 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
             end
         endcase  
     end
-
 endmodule
 
 module twosComplement(REGOUT2,COMPLEMENTED_OUT);
