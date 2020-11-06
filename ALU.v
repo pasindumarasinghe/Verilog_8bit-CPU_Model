@@ -65,10 +65,10 @@ module alu(DATA1,DATA2,RESULT,SELECT,ZERO);
     ADD Add(DATA1,DATA2,add_out);
     AND And(DATA1,DATA2,and_out);
     OR Or(DATA1,DATA2,or_out);
-    ROTATE_RIGHT ROR(DATA1,DATA2,ror_out);
-    MULTIPLY mul(DATA1,DATA2,mul_out);
-    ARITHMATIC_SHIFT_RIGHT sra(DATA1,DATA2,sra_out);
-    LOGICAL_SHIFT sl(DATA1,DATA2,shiftl_out);
+    OTATE_RIGHT ROR(DATA2,DATA1,ror_out);
+    //MULTIPLY mul(DATA1,DATA2,mul_out);
+    //ARITHMATIC_SHIFT_RIGHT sra(DATA2,DATA1,sra_out);
+    //LOGICAL_SHIFT sl(DATA2,DATA1,shiftl_out);
     
     always @ (add_out) begin //setting out for beq and bne instructions
         if ( add_out == 0 )
@@ -165,9 +165,10 @@ module ROTATE_RIGHT(DATA_IN,IMMEDIATE_VALUE,RESULT);
     input [7:0] IMMEDIATE_VALUE;
     output reg [7:0] RESULT;
 
+    integer i = 128*IMMEDIATE_VALUE[7] + 64*IMMEDIATE_VALUE[6] + 32*IMMEDIATE_VALUE[5] + 16*IMMEDIATE_VALUE[4] + 8*IMMEDIATE_VALUE[3] + 4*IMMEDIATE_VALUE[2] + 2*IMMEDIATE_VALUE[1] + IMMEDIATE_VALUE[0];
+
     always @ (DATA_IN,IMMEDIATE_VALUE) begin
-        RESULT =  {DATA_IN[IMMEDIATE_VALUE-1'b1:0],DATA_IN[7:IMMEDIATE_VALUE]};        
-    end
+		RESULT =  {DATA_IN[i-1:0],DATA_IN[7:i]};
 endmodule
 
 module ARITHMATIC_SHIFT_RIGHT(DATA_IN,IMMEDIATE_VALUE,RESULT);
