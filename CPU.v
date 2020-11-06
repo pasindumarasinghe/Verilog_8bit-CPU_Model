@@ -1,3 +1,4 @@
+
 `include "REG_FILE.v"
 `include "ALU.v"
 
@@ -19,6 +20,9 @@ module cpu(PC, INSTRUCTION, CLK, RESET);
     wire JUMP_FALG;//control signal for the mux4 (choose between immediate value added PC or mux3 out)
     wire ZERO_AND_BRANCHFLAG;//control signal for the mux3 (choose between immediate value added PC or PC+4)
     wire ZERO;//to be used in BEQ instructions
+    wire ZEROCOMP_AND_BNEFLAG;//BNE_ENABLE
+    wire BNE_FLAG;
+    wire BNE_OR_BEQ;
     
     wire [7:0] REGOUT1;//registerfile out 1
     wire [7:0] REGOUT2;//registerfile out 2
@@ -44,7 +48,7 @@ module cpu(PC, INSTRUCTION, CLK, RESET);
     assign JUMP_IMMEDIATE_RAW =INSTRUCTION[23:16];
 	
     //instantiating the modules control unit, pc adder, reg file, alu and the complementor
-    control_unit ctrlUnit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG,BRANCH_FALG,JUMP_FALG);
+    control_unit ctrlUnit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG,BRANCH_FALG,JUMP_FALG,BNE_FLAG);
     pc_adder pcNext(PC,PC_PLUS4);
     pc_adder_jump pcJumpNext(PC_PLUS4,PC_NEXT_JUMP,JUMP_IMMEDIATE_FINAL);
     reg_file regFile(ALU_RESULT,REGOUT1,REGOUT2,WRITEREG,READREG1,READREG2, WRITEENABLE, CLK, RESET);
@@ -53,6 +57,10 @@ module cpu(PC, INSTRUCTION, CLK, RESET);
     
     //assigning the mux3 control (choose between immediate value added PC or PC+4)
     assign ZERO_AND_BRANCHFLAG = ZERO & BRANCH_FALG;
+    
+    assign ZEROCOMP_AND_BNEFLAG = (!ZERO) & BNE_FLAG;
+    
+    assign BNE_OR_BEQ = ZERO_AND_BRANCHFLAG | ZEROCOMP_AND_BNEFLAG;
 
     //left shifting by 2 (as the jump instruction immediate offset comes in terms of instructions) is achived by wiring
     //sign is extended by concatenating the MSB 22 times
@@ -75,8 +83,8 @@ module cpu(PC, INSTRUCTION, CLK, RESET);
         endcase
     end
     
-    always @ (PC_NEXT_JUMP,ZERO_AND_BRANCHFLAG,PC_PLUS4) begin//mux 3 (where immediate offset or mux 1's out is choosen)
-        case (ZERO_AND_BRANCHFLAG)
+    always @ (PC_NEXT_JUMP,BNE_OR_BEQ,PC_PLUS4) begin//mux 3 (where immediate offset or mux 1's out is choosen)
+        case (BNE_OR_BEQ)
             0 : MUX_3_OUT <= PC_PLUS4;//PC + 4 value
             1 : MUX_3_OUT <= PC_NEXT_JUMP;//immediate value added PC
         endcase
@@ -91,15 +99,15 @@ module cpu(PC, INSTRUCTION, CLK, RESET);
 
     always @ (posedge CLK) begin//synchronous reset of the pc
         case(RESET)
-            0 : PC <= #1 PC_NEXT;
-            1 : PC <= #1 32'b0;
+            0 : #1 PC =  PC_NEXT;
+            1 : #1 PC =  32'b0;
         endcase
     end
 
 endmodule
 
 
-module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG,BRANCH_FALG,JUMP_FALG);
+module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG,BRANCH_FALG,JUMP_FALG,BNE_FLAG);
     
     input [31:0] INSTRUCTION;
     output reg WRITEENABLE;
@@ -108,6 +116,7 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
     output reg IMMEDIATE_FALG;
     output reg BRANCH_FALG;
     output reg JUMP_FALG;
+    output reg BNE_FLAG;
 
     wire [7:0] opcode;
     assign opcode = INSTRUCTION[31:24];
@@ -120,7 +129,8 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
                 IMMEDIATE_FALG <=#1 1;
                 BRANCH_FALG <=#1 0;
                 JUMP_FALG <=#1 0;
-                ALUOP <= #1 3'b000;//loadi==>foward                  
+                ALUOP <= #1 3'b000;//loadi==>foward
+                BNE_FLAG <= #1 0;                  
             end
             8'b0000_0001 : begin// uncomplemented register file output two is fowarded to be written     
                 WRITEENABLE <= #1 1;
@@ -129,6 +139,7 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
                 BRANCH_FALG <=#1 0;
                 JUMP_FALG <=#1 0;
                 ALUOP <= #1 3'b000;//mov==>foward 
+                BNE_FLAG <= #1 0;
             end
             8'b0000_0010 : begin//uncomplemented values are added             
                 WRITEENABLE <= #1 1;
@@ -137,6 +148,7 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
                 BRANCH_FALG <=#1 0;
                 JUMP_FALG <=#1 0;
                 ALUOP <= #1 3'b001;//add==>add
+                BNE_FLAG <= #1 0;
             end
             8'b0000_0011 : begin//complemented values are added    
                 WRITEENABLE <= #1 1;
@@ -145,6 +157,7 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
                 BRANCH_FALG <=#1 0;
                 JUMP_FALG <=#1 0;
                 ALUOP <= #1 3'b001;//sub==>add
+                BNE_FLAG <= #1 0;
             end
             8'b0000_0100 : begin//uncomplemented reg values are andded 
                 WRITEENABLE <= #1 1;
@@ -152,7 +165,8 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
                 IMMEDIATE_FALG <= #1 0;
                 BRANCH_FALG <=#1 0;
                 JUMP_FALG <=#1 0;
-                ALUOP <= #1 3'b010;//and==>and  
+                ALUOP <= #1 3'b010;//and==>and 
+                BNE_FLAG <= #1 0; 
             end
             8'b0000_0101 : begin//uncomplemented values are orred         
                 WRITEENABLE <= #1 1;
@@ -160,7 +174,8 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
                 IMMEDIATE_FALG <= #1 0;
                 BRANCH_FALG <=#1 0;
                 JUMP_FALG <=#1 0;
-                ALUOP <= #1 3'b011;//or==>or    
+                ALUOP <= #1 3'b011;//or==>or 
+                BNE_FLAG <= #1 0;   
             end
             8'b0000_0110 : begin//jump instruction ; alu's behaviour doesn't matter
                 WRITEENABLE <= #1 0;
@@ -168,7 +183,8 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
                 IMMEDIATE_FALG <= #1 0;
                 BRANCH_FALG <=#1 0;
                 JUMP_FALG <=#1 1;//jump is set to 1
-                ALUOP <= #1 3'b000;    
+                ALUOP <= #1 3'b000;
+                BNE_FLAG <= #1 0;    
             end
             8'b0000_0111 : begin//beq instruction ; alu performs an add operation with the complemented data2 value         
                 WRITEENABLE <= #1 0;
@@ -176,8 +192,20 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
                 IMMEDIATE_FALG <= #1 0;
                 BRANCH_FALG <=#1 1;//branch flag is set to 1
                 JUMP_FALG <=#1 0;
-                ALUOP <= #1 3'b010;//beq==>add
+                ALUOP <= #1 3'b001;//beq==>add
+                BNE_FLAG <= #1 0;
             end
+            
+            8'b0000_1000 : begin//bne        
+                WRITEENABLE <= #1 0;
+                COMPLEMENT_FLAG <= #1 1;
+                IMMEDIATE_FALG <= #1 0;
+                ALUOP <= #1 3'b001;
+                JUMP_FALG <= #1 0;
+                BRANCH_FALG <= #1 0;
+                BNE_FLAG <= #1 1;    
+            end
+            
             default : begin              
                 WRITEENABLE <= #1 1'bz;
                 COMPLEMENT_FLAG <= #1 1'bz;

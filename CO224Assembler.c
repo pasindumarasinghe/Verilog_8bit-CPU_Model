@@ -33,6 +33,7 @@ Generated output file	: <your_assembly_file_name>.machine
 #include <string.h>
 #include <ctype.h>
 
+
 #define LINE_SIZE 512
 
 
@@ -50,7 +51,7 @@ int main( int argc, char *argv[] )
 	char *op_or 	= "00000101";
 	char *op_j		= "00000110";
 	char *op_beq	= "00000111";
-	char *op_lwd 	= "00001000";
+	char *op_bne 	= "00001000";
 	char *op_lwi 	= "00001001";
 	char *op_swd 	= "00001010";
 	char *op_swi 	= "00001011";
@@ -149,7 +150,7 @@ int main( int argc, char *argv[] )
 			else if(strcasecmp(in_token,"or")==0) strcpy(out_token, op_or);
 			else if(strcasecmp(in_token,"j")==0) strcpy(out_token, op_j);
 			else if(strcasecmp(in_token,"beq")==0) strcpy(out_token, op_beq);
-			else if(strcasecmp(in_token,"lwd")==0) strcpy(out_token, op_lwd);
+			else if(strcasecmp(in_token,"bne")==0) strcpy(out_token, op_bne);
 			else if(strcasecmp(in_token,"lwi")==0) strcpy(out_token, op_lwi);
 			else if(strcasecmp(in_token,"swd")==0) strcpy(out_token, op_swd);
 			else if(strcasecmp(in_token,"swi")==0) strcpy(out_token, op_swi);

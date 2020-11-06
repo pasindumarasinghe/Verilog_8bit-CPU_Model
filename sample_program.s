@@ -1,8 +1,7 @@
-loadi 4 0x0A
+loadi 4 0x05
+loadi 2 0x04
+bne 0x01 2 4
+beq 0x01 2 4
+mov 0 6
 loadi 5 0x01
-loadi 6 0x01
-loadi 7 0x09
-sub 4 4 5   
-beq 0x01 4 6
-j 0xFD      
-add 1 4 7
+sub 3 2 5
