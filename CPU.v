@@ -21,6 +21,7 @@ module cpu(PC, INSTRUCTION, CLK, RESET);
     wire ZERO_AND_BRANCHFLAG;//control signal for the mux3 (choose between immediate value added PC or PC+4)
     wire ZERO;//to be used in BEQ instructions
     wire ZEROCOMP_AND_BNEFLAG;//BNE_ENABLE
+    wire IMMEDIATE_COMPLEMENT_FLAG;//to choose the negated value in a shift left
     wire BNE_FLAG;
     wire BNE_OR_BEQ;
     
@@ -29,11 +30,13 @@ module cpu(PC, INSTRUCTION, CLK, RESET);
     wire [7:0] COMPLEMENTED_OUT;//output from the 2's complementor
     reg [7:0] COMPLEMENT_MUX_OUT;//output from the mux 1 (complement)
     reg [7:0] IMMEDIATE_MUX_OUT;//output from the mux 2 (immediate)
+    reg [7:0] ALU_DATA2;//out from the immediate complement mux
     wire [7:0] IMMEDIATE;//immediate value from the control unit 
     wire [7:0] ALU_RESULT;
     reg [31:0] MUX_3_OUT;//to be used as the fourth mux's input
     wire [31:0] JUMP_IMMEDIATE_FINAL;
-    wire [7:0] JUMP_IMMEDIATE_RAW;    
+    wire [7:0] JUMP_IMMEDIATE_RAW;        
+    wire [7:0] COMPLEMENTED_IMMEDIATE;
 
     //register file inputs
     wire [2:0] READREG1;
@@ -54,6 +57,7 @@ module cpu(PC, INSTRUCTION, CLK, RESET);
     reg_file regFile(ALU_RESULT,REGOUT1,REGOUT2,WRITEREG,READREG1,READREG2, WRITEENABLE, CLK, RESET);
     alu ALU(REGOUT1,IMMEDIATE_MUX_OUT,ALU_RESULT,ALUOP,ZERO);
     twosComplement complementor(REGOUT2,COMPLEMENTED_OUT);
+    // twosComplement complementor_immediate(IMMEDIATE_MUX_OUT,COMPLEMENTED_IMMEDIATE);
     
     //assigning the mux3 control (choose between immediate value added PC or PC+4)
     assign ZERO_AND_BRANCHFLAG = ZERO & BRANCH_FALG;
@@ -82,6 +86,13 @@ module cpu(PC, INSTRUCTION, CLK, RESET);
             1 : IMMEDIATE_MUX_OUT <= IMMEDIATE;//immediate value
         endcase
     end
+
+    // always @ (IMMEDIATE_MUX_OUT,COMPLEMENTED_IMMEDIATE,IMMEDIATE_COMPLEMENT_FLAG) begin//mux (where complemented or original value is choosen for immediate value)
+    //     case (IMMEDIATE_COMPLEMENT_FLAG)
+    //         0 : ALU_DATA2 <= IMMEDIATE_MUX_OUT;//immediate mux's output
+    //         1 : ALU_DATA2 <= COMPLEMENTED_IMMEDIATE;//complemented value
+    //     endcase
+    // end
     
     always @ (PC_NEXT_JUMP,BNE_OR_BEQ,PC_PLUS4) begin//mux 3 (where immediate offset or mux 1's out is choosen)
         case (BNE_OR_BEQ)
@@ -116,6 +127,7 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
     output reg IMMEDIATE_FALG;
     output reg BRANCH_FALG;
     output reg JUMP_FALG;
+    // output reg IMMEDIATE_COMPLEMENT_FLAG;
     output reg BNE_FLAG;
 
     wire [7:0] opcode;
@@ -205,6 +217,53 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
                 BRANCH_FALG <= #1 0;
                 BNE_FLAG <= #1 1;    
             end
+            
+            // 8'00001001 : begin//ROR instruction ; alu performs an ror operation with the uncomplemented data value         
+            //     WRITEENABLE <= #1 1;
+            //     COMPLEMENT_FLAG <= #1 0;
+            //     IMMEDIATE_FALG <= #1 1;
+            //     BRANCH_FALG <=#1 0;
+            //     JUMP_FALG <=#1 0;
+            //     IMMEDIATE_COMPLEMENT_FLAG = #1 0;
+            //     ALUOP <= #1 3'b100;//ror==>ror
+            // end
+            // 8'00001010 : begin//sra instruction ; alu performs an add operation with the complemented data2 value         
+            //     WRITEENABLE <= #1 1;
+            //     COMPLEMENT_FLAG <= #1 0;
+            //     IMMEDIATE_FALG <= #1 1;
+            //     BRANCH_FALG <=#1 0;
+            //     JUMP_FALG <=#1 0;
+            //     IMMEDIATE_COMPLEMENT_FLAG = #1 0;
+            //     ALUOP <= #1 3'b111;//sra==>shift_logical
+            // end
+            // 8'00001011 : begin//sll instruction ; alu performs an add operation with the complemented data2 value         
+            //     WRITEENABLE <= #1 1;
+            //     COMPLEMENT_FLAG <= #1 0;
+            //     IMMEDIATE_FALG <= #1 1;
+            //     BRANCH_FALG <=#1 0;
+            //     JUMP_FALG <=#1 0;
+            //     IMMEDIATE_COMPLEMENT_FLAG = #1 1;
+            //     ALUOP <= #1 3'b010;//sll==>shift_logical
+            // end
+            // 8'00001100 : begin//srl instruction ; alu performs an add operation with the complemented data2 value         
+            //     WRITEENABLE <= #1 1;
+            //     COMPLEMENT_FLAG <= #1 0;
+            //     IMMEDIATE_FALG <= #1 1;
+            //     BRANCH_FALG <=#1 0;
+            //     JUMP_FALG <=#1 0;
+            //     IMMEDIATE_COMPLEMENT_FLAG = #1 0;
+            //     ALUOP <= #1 3'b110;//srl==>sra
+            // end
+            // 8'00001101 : begin//mult instruction ; alu performs an add operation with the complemented data2 value         
+            //     WRITEENABLE <= #1 1;
+            //     COMPLEMENT_FLAG <= #1 0;
+            //     IMMEDIATE_FALG <= #1 0;
+            //     BRANCH_FALG <=#1 0;
+            //     JUMP_FALG <=#1 0;
+            //     IMMEDIATE_COMPLEMENT_FLAG = #1 0;
+            //     ALUOP <= #1 3'b101;//mult==>mult
+            // end
+    
             
             default : begin              
                 WRITEENABLE <= #1 1'bz;
