@@ -1,2 +1,4 @@
 *.vcd
 *.vvp
+*.mem
+sample_programm.s

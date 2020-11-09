@@ -7,7 +7,7 @@ module testbed;//for testing the reg_file
 
     initial begin
         $monitor($time," OUT1 : %b OUT2 : %b",OUT1,OUT2);//monitering the changes in results
-        $dumpfile("regfile_wavedata.vcd");//wavedata dumpfile to be examined with GTKwave
+        $dumpfile("REG_REG_FILE_wavedata.vcd");//wavedata dumpfile to be examined with GTKwave
         $dumpvars(0,testbed);//dumpng all the variables in the testbed 
     end
 
@@ -119,5 +119,17 @@ module reg_file(IN,OUT1,OUT2,INADDRESS,OUT1ADDRESS,OUT2ADDRESS, WRITE, CLK, RESE
             #1 REG_FILE[INADDRESS] <=  IN;
         end
     end
+      /* START DEBUGGING CODE (Not required in the usual implementation */
+    initial
+    begin
+    // monitor changes in reg file content and print (used to check whether the CPU is running properly)
+    $display("\n\t\t\t=================================================");
+    $display("\t\t\t Change of Register Content Starting from Time #5");
+    $display("\t\t\t==================================================\n");
+    $display("\t\ttime\treg0\treg1\treg2\treg3\treg4\treg5\treg6\ttreg7");
+    $display("\t\t-----------------------------------------------------");
+    $monitor($time, "\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d",REG_FILE[0],REG_FILE[1],REG_FILE[2],REG_FILE[3],REG_FILE[4],REG_FILE[5],REG_FILE[6],REG_FILE[7]);
+    end
+    /* END DEBUGGING CODE */
 
 endmodule
