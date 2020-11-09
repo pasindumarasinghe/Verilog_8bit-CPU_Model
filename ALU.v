@@ -12,7 +12,9 @@ module alu(DATA1,DATA2,RESULT,SELECT,ZERO);
     ADD Add(DATA1,DATA2,add_out);
     AND And(DATA1,DATA2,and_out) ;
     OR Or(DATA1,DATA2,or_out) ;
-    // ROTATE_RIGHT ROR(DATA2,DATA1,ror_out);
+    // LOGICAL_SHIFT ls(DATA2,DATA1,shiftl_out);
+
+//    ROTATE_RIGHT ROR(DATA2,DATA1,ror_out);
     //MULTIPLY mul(DATA1,DATA2,mul_out);
     //ARITHMATIC_SHIFT_RIGHT sra(DATA2,DATA1,sra_out);
     //LOGICAL_SHIFT sl(DATA2,DATA1,shiftl_out);
@@ -23,7 +25,7 @@ module alu(DATA1,DATA2,RESULT,SELECT,ZERO);
 			3'b001 :  RESULT = add_out;
 			3'b010 :  RESULT = and_out;
 			3'b011 :  RESULT = or_out;
-    // 3'b100 :  RESULT = ror_out;
+//    3'b100 :  RESULT = ror_out;
     // 3'b101 :  RESULT = mul_out;
     // 3'b110 :  RESULT = sra_out;
     // 3'b111 :  RESULT = shiftl_out;
@@ -74,26 +76,40 @@ module OR(DATA1,DATA2,RESULT) ;//module for bitwise or operation
 
 endmodule
 
-// module LOGICAL_SHIFT(DATA1,IMMEDIATE_VALUE,RESULT) ;//module for bitwise or operation
+module LOGICAL_SHIFT(DATA1,IMMEDIATE_VALUE,RESULT) ;//module for bitwise or operation
 
-//     input [7:0] DATA1 ;
-//     input signed [7:0] IMMEDIATE_VALUE;
-//     output reg [7:0] RESULT;
+    input [7:0] DATA1 ;
+    input signed [7:0] IMMEDIATE_VALUE;
+    output reg [7:0] RESULT;
+    
+    reg [0:7] data;
+    integer i;
 
-//     reg [7:0] shift_amount = 1'd0;
+    reg shift=0;
+    reg shift_amount;
+
+    shift_left_logical sll(shift,data,RESULT);
+    shift_right_logical srl(shift,data,RESULT);
    
-//    always @ (DATA1,IMMEDIATE_VALUE) begin
-//        case(IMMEDIATE_VALUE[7])//check the MSB for sign
-//            0:begin//if the value is positive
-//                shift_amount = IMMEDIATE_VALUE;
-//                RESULT = {{shift_amount*{DATA1[7]}},DATA1[7:IMMEDIATE_VALUE]};
-//            end           
-//            1:begin//if the value is negative
-//                shift_amount = -IMMEDIATE_VALUE;
-//                RESULT = {DATA1[7-shift_amount:0],{shift_amount*{1'0}}};               
-//            end
-//        endcase
-//    end
+   always @ (DATA1,IMMEDIATE_VALUE) begin
+       case(IMMEDIATE_VALUE[7])//check the MSB for sign
+           0:begin//if the value is positive
+               shift_amount = IMMEDIATE_VALUE;
+           end           
+           1:begin//if the value is negative
+               shift_amount = -IMMEDIATE_VALUE;              
+           end
+       endcase
+   end
+
+   for(i=0;i<shift_amount;i++) begin
+       shift=1;
+       shift=0;   
+       data = RESULT;
+
+   end
+
+
 // endmodule
 
 // module ROTATE_RIGHT(DATA_IN,IMMEDIATE_VALUE,RESULT);
@@ -102,10 +118,11 @@ endmodule
 //     input [7:0] IMMEDIATE_VALUE;
 //     output reg [7:0] RESULT;
 
-//     integer i = 128*IMMEDIATE_VALUE[7] + 64*IMMEDIATE_VALUE[6] + 32*IMMEDIATE_VALUE[5] + 16*IMMEDIATE_VALUE[4] + 8*IMMEDIATE_VALUE[3] + 4*IMMEDIATE_VALUE[2] + 2*IMMEDIATE_VALUE[1] + IMMEDIATE_VALUE[0];
+//     // integer i = 128*IMMEDIATE_VALUE[7] + 64*IMMEDIATE_VALUE[6] + 32*IMMEDIATE_VALUE[5] + 16*IMMEDIATE_VALUE[4] + 8*IMMEDIATE_VALUE[3] + 4*IMMEDIATE_VALUE[2] + 2*IMMEDIATE_VALUE[1] + IMMEDIATE_VALUE[0];
 
 //     always @ (DATA_IN,IMMEDIATE_VALUE) begin
-// 		RESULT =  {DATA_IN[i-1:0],DATA_IN[7:i]};
+// 		RESULT =  {DATA_IN[IMMEDIATE_VALUE-1:0],DATA_IN[7:IMMEDIATE_VALUE]};
+//     end
 // endmodule
 
 // module ARITHMATIC_SHIFT_RIGHT(DATA_IN,IMMEDIATE_VALUE,RESULT);
@@ -120,35 +137,87 @@ endmodule
 
 // endmodule
 
-// module MULTIPLY(DATA_IN,IMMEDIATE_VALUE,RESULT);
+module MULTIPLY(DATA_IN,IMMEDIATE_VALUE,RESULT);
 
-//     input [0:7] DATA_IN;
-//     input [7:0] IMMEDIATE_VALUE;
-//     output reg [7:0] RESULT;
+    input [0:7] DATA_IN;
+    input [7:0] IMMEDIATE_VALUE;
+    output reg [7:0] RESULT;
 
-//     reg [7:0] PRODUCT0,PRODUCT1,PRODUCT2,PRODUCT3,PRODUCT4,PRODUCT5,PRODUCT6,PRODUCT7;//intermediate wires
-//     wire [7:0] intermediate1,intermediate2;
+    reg [7:0] PRODUCT0,PRODUCT1,PRODUCT2,PRODUCT3,PRODUCT4,PRODUCT5,PRODUCT6,PRODUCT7;//intermediate wires
+    wire [7:0] intermediate1,intermediate2;
 
-//     //multiplying one value with each bit of the other, sperately
-//     PRODUCT0[3:0] = {4{DATA_IN[0]}} ;
-//     PRODUCT1[3:0] = {4{DATA_IN[1]}} ;
-//     PRODUCT2[3:0] = {4{DATA_IN[2]}} ;
-//     PRODUCT3[3:0] = {4{DATA_IN[3]}} ;
+    //multiplying one value with each bit of the other, sperately
+    PRODUCT0[3:0] = {4{DATA_IN[0]}} & IMMEDIATE_VALUE[3:0];
+    PRODUCT1[3:0] = {4{DATA_IN[1]}} & IMMEDIATE_VALUE[3:0];
+    PRODUCT2[3:0] = {4{DATA_IN[2]}} & IMMEDIATE_VALUE[3:0];
+    PRODUCT3[3:0] = {4{DATA_IN[3]}} & IMMEDIATE_VALUE[3:0];
 
-//     PRODUCT0[3:0] = PRODUCT0[3:0] & IMMEDIATE_VALUE[3:0]
-//     PRODUCT1[3:0] = PRODUCT1[3:0] & IMMEDIATE_VALUE[3:0]
-//     PRODUCT2[3:0] = PRODUCT2[3:0] & IMMEDIATE_VALUE[3:0]
-//     PRODUCT3[3:0] = PRODUCT3[3:0] & IMMEDIATE_VALUE[3:0]
+    //sign extending and shifting
+    PRODUCT0[7:0] = {4{PRODUCT0[3]},PRODUCT0[3:0]};           
+    PRODUCT1[7:0] = {3{PRODUCT1[3]},PRODUCT1[3:0],1'b0};  
+    PRODUCT2[7:0] = {2{PRODUCT2[3]},PRODUCT2[3:0],2'b00}; 
+    PRODUCT3[7:0] = {1{PRODUCT3[3]},PRODUCT3[3:0],3'b000};
 
-//     //sign extending and shifting
-//     PRODUCT0[7:0] = {4{PRODUCT0[3]},PRODUCT0[3:0]};           
-//     PRODUCT1[7:0] = {3{PRODUCT1[3]},PRODUCT1[3:0],1'b0};  
-//     PRODUCT2[7:0] = {2{PRODUCT2[3]},PRODUCT2[3:0],2'b00}; 
-//     PRODUCT3[7:0] = {1{PRODUCT3[3]},PRODUCT3[3:0],3'b000};
+    intermediate1 #1 = PRODUCT0 + PRODUCT1 ;
+    intermediate2 #1 = PRODUCT2 + PRODUCT3 ;
 
-//     intermediate1 #1 = PRODUCT0 + PRODUCT1 ;
-//     intermediate2 #1 = PRODUCT2 + PRODUCT3 ;
+    RESULT #1 = intermediate1 + intermediate2;
 
-//     RESULT #1 = intermediate1 + intermediate2;
+endmodule
+
+// module shift_left_logical(shift,DATA,out) ;
+
+//     input shift;
+//     input [7:0] DATA;
+//     output  [7:0] out;
+
+//     out[0] = DATA[0] & !shift  ;
+//     out[1] = DATA[1] & !shift  + shift & DATA[0];
+//     out[2] = DATA[2] & !shift  + shift & DATA[1];
+//     out[3] = DATA[3] & !shift  + shift & DATA[2];
+ 
+//     out[4] = DATA[4] & !shift  + shift & DATA[3];
+//     out[5] = DATA[5] & !shift  + shift & DATA[4];
+//     out[6] = DATA[6] & !shift  + shift & DATA[5];
+//     out[7] = DATA[7] & !shift  + shift & DATA[6];
 
 // endmodule
+
+
+// module shift_right_logical(shift,DATA,out) ;
+
+//     input shift;
+//     input [7:0] DATA;
+//     output  [7:0] out;
+
+//     out[7] = DATA[7] & !shift ;
+//     out[6] = DATA[6] & !shift  + shift & DATA[0];
+//     out[5] = DATA[5] & !shift  + shift & DATA[1];
+//     out[4] = DATA[4] & !shift  + shift & DATA[2];
+ 
+//     out[3] = DATA[3] & !shift  + shift & DATA[3];
+//     out[2] = DATA[2] & !shift  + shift & DATA[4];
+//     out[1] = DATA[1] & !shift  + shift & DATA[5];
+//     out[0] = DATA[0] & !shift  + shift & DATA[6];
+
+// endmodule
+
+
+// module shift_right_arithmatic(shift,DATA,out) ;
+
+//     input shift;
+//     input [7:0] DATA;
+//     output  [7:0] out;
+
+//     out[7] = DATA[7] & !shift + shift & DATA[7];
+//     out[6] = DATA[6] & !shift + shift & DATA[7];
+//     out[5] = DATA[5] & !shift + shift & DATA[6];
+//     out[4] = DATA[4] & !shift + shift & DATA[5];
+ 
+//     out[3] = DATA[3] & !shift + shift & DATA[4];
+//     out[2] = DATA[2] & !shift + shift & DATA[3];
+//     out[1] = DATA[1] & !shift + shift & DATA[2];
+//     out[0] = DATA[0] & !shift + shift & DATA[1];
+
+// endmodule
+
