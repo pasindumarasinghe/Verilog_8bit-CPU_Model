@@ -52,7 +52,7 @@ module cpu(PC, INSTRUCTION,CLK, RESET, READ, WRITE, ADDRESS, WRITE_DATA, READ_DA
     assign JUMP_IMMEDIATE_RAW =INSTRUCTION[23:16];
 	
     //instantiating the modules control unit, pc adder, reg file, alu and the complementor
-    control_unit ctrlUnit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG,BRANCH_FALG,JUMP_FALG,WRITE,READ,LOAD_WORD_FLAG);
+    control_unit ctrlUnit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG,BRANCH_FALG,JUMP_FALG,WRITE,READ,LOAD_WORD_FLAG,BUSYWAIT);
     pc_adder pcNext(PC,PC_PLUS4);
     pc_adder_jump pcJumpNext(PC_PLUS4,PC_NEXT_JUMP,JUMP_IMMEDIATE_FINAL);
     reg_file regFile(REG_FILE_DATA_IN,REGOUT1,REGOUT2,WRITEREG,READREG1,READREG2, WRITEENABLE, CLK, RESET);
@@ -120,7 +120,7 @@ module cpu(PC, INSTRUCTION,CLK, RESET, READ, WRITE, ADDRESS, WRITE_DATA, READ_DA
 endmodule
 
 
-module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG,BRANCH_FALG,JUMP_FALG,WRITE,READ,LOAD_WORD_FLAG);
+module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG,BRANCH_FALG,JUMP_FALG,WRITE,READ,LOAD_WORD_FLAG,BUSYWAIT);
     
     input [31:0] INSTRUCTION;
     input BUSYWAIT;
@@ -137,7 +137,12 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
     wire [7:0] opcode;
     assign opcode = INSTRUCTION[31:24];
 
-    always @ (opcode) begin//control unit decisions ; with simulated decoding delays
+    always @ (negedge BUSYWAIT) begin
+        READ = 0;
+        WRITE = 0;
+    end
+
+    always @ (opcode,BUSYWAIT) begin//control unit decisions ; with simulated decoding delays
         case (opcode)
             8'b0000_0000 : begin//register is written into and an immediate value is chosen in a loadi instruction
                 WRITEENABLE <= #1 1;
@@ -230,7 +235,7 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
             8'b0000_1000 : begin//lwd instruction ; alu performs a foward operation 
                 WRITEENABLE <= #1 1;//write to reg file
                 COMPLEMENT_FLAG <= #1 0;
-                IMMEDIATE_FALG <= #1 1;
+                IMMEDIATE_FALG <= #1 0;
                 BRANCH_FALG <=#1 0;
                 JUMP_FALG <=#1 0;
                 WRITE <=#1 0;
@@ -238,7 +243,7 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
                 LOAD_WORD_FLAG <=#1 1;
                 ALUOP <= #1 3'b000;
             end
-            8'b0000_1001 : begin//lwi instruction ; alu performs a foward operation         
+            8'b0000_1001 : begin//lwi instruction ; alu performs a foward operation       
                 WRITEENABLE <= #1 1;//write to reg file
                 COMPLEMENT_FLAG <= #1 0;
                 IMMEDIATE_FALG <= #1 1;
@@ -252,7 +257,7 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
             8'b0000_1010 : begin//swd instruction ; alu performs a foward operation         
                 WRITEENABLE <= #1 0;
                 COMPLEMENT_FLAG <= #1 0;
-                IMMEDIATE_FALG <= #1 1;
+                IMMEDIATE_FALG <= #1 0;
                 BRANCH_FALG <=#1 0;
                 JUMP_FALG <=#1 0;
                 WRITE <=#1 1;//write to memory
@@ -260,7 +265,7 @@ module control_unit(INSTRUCTION,WRITEENABLE,ALUOP,COMPLEMENT_FLAG,IMMEDIATE_FALG
                 LOAD_WORD_FLAG <=#1 0;
                 ALUOP <= #1 3'b000;
             end
-            8'b0000_1011 : begin//swi instruction ; alu performs a foward operation         
+            8'b0000_1011 : begin//swi instruction ; alu performs a foward operation 
                 WRITEENABLE <= #1 0;
                 COMPLEMENT_FLAG <= #1 0;
                 IMMEDIATE_FALG <= #1 1;
