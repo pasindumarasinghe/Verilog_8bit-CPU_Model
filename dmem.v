@@ -72,17 +72,5 @@ begin
 		writeaccess = 0;
     end
 end
-    /* START DEBUGGING CODE (Not required in the usual implementation */
-initial
-begin
-// monitor changes in  file content and print (used to check whether the CPU is running properly)
-$display("\n\t\t\t=================================================");
-$display("\t\t\t Change of MEMORY Content Starting from Time #5");
-$display("\t\t\t==================================================\n");
-$display("\t\ttime\tmem0\tmem1\tmem2\tmem3\tmem4\tmem5\tmem6\ttmem7");
-$display("\t\t-----------------------------------------------------");
-$monitor($time, "\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d",memory_array[0],memory_array[1],memory_array[2],memory_array[3],memory_array[4],memory_array[5],memory_array[6],memory_array[7]);
-end
-/* END DEBUGGING CODE */
 
 endmodule
